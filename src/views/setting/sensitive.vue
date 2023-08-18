@@ -1,7 +1,7 @@
 <template>
   <div class="sensitive">
     <el-page-header class="header" @back="goBack"></el-page-header>
-    <div class="box-card">
+    <div class="box-card" shadow="never">
       <el-card>
         <div slot="header" class="clearfix">
           <span
@@ -13,9 +13,21 @@
           <p>
             {{ $t('views.sensitiveManage.p1') }}
           </p>
-          <p>{{ $t('views.sensitiveManage.p2') }}</p>
-          <p>{{ $t('views.sensitiveManage.p3') }}</p>
-          <p>
+          <p class="mgt-10">
+            {{ $t('views.sensitiveManage.p1-1') }}
+          </p>
+          <p class="text-indent">
+            {{ $t('views.sensitiveManage.p1-2') }}
+          </p>
+          <p class="text-indent">
+            {{ $t('views.sensitiveManage.p1-3') }}
+          </p>
+          <p class="text-indent">
+            {{ $t('views.sensitiveManage.p1-4') }}
+          </p>
+          <p class="mgt-10">{{ $t('views.sensitiveManage.p2') }}</p>
+          <p class="text-indent">{{ $t('views.sensitiveManage.p3') }}</p>
+          <p class="text-indent">
             {{ $t('views.sensitiveManage.p4') }}
           </p>
         </div>
@@ -265,11 +277,11 @@ export default class sensitiveManage extends VueBase {
 .header {
   padding-bottom: 16px;
   color: #4a72ae;
-  /deep/.el-page-header__left::after {
+  ::v-deep.el-page-header__left::after {
     display: none;
   }
 }
-/deep/.el-card__header {
+::v-deep.el-card__header {
   background: rgba(255, 150, 87, 0.1);
   padding: 8px !important;
   border-bottom: none;
@@ -286,7 +298,7 @@ export default class sensitiveManage extends VueBase {
     }
   }
 }
-/deep/.el-card__body {
+::v-deep.el-card__body {
   background: rgba(255, 150, 87, 0.1);
   padding: 16px;
   padding-top: 0;
@@ -300,7 +312,7 @@ export default class sensitiveManage extends VueBase {
 .search-box {
   display: flex;
   align-items: center;
-  /deep/.el-input__inner {
+  ::v-deep.el-input__inner {
     border-right: none;
     border-radius: 0;
   }
@@ -345,6 +357,8 @@ export default class sensitiveManage extends VueBase {
 }
 .box-card {
   padding-bottom: 20px;
+  color: #38435a;
+  border: none;
 }
 .test-btn {
   position: absolute;
@@ -359,5 +373,11 @@ export default class sensitiveManage extends VueBase {
   font-size: 16px;
   margin-left: 6px;
   color: rgba(182, 187, 197, 1);
+}
+.text-indent {
+  text-indent: 2em;
+}
+.mgt-10 {
+  margin-top: 10px;
 }
 </style>

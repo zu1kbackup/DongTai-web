@@ -17,6 +17,7 @@
             @click="changeLanguage('python')"
           >
             <img src="../../assets/img/deploy/python.png" />
+            <span class="beta">beta</span>
           </div>
           <div
             class="language"
@@ -26,6 +27,24 @@
             <img src="../../assets/img/deploy/php.png" />
             <span class="beta">beta</span>
           </div>
+
+          <div
+            class="language"
+            :class="language === 'go' && 'active'"
+            @click="changeLanguage('go')"
+          >
+            <img src="../../assets/img/deploy/go.png" />
+            <span class="beta">beta</span>
+          </div>
+        </div>
+        <div
+          v-if="
+            language === 'go' || language === 'php' || language === 'python'
+          "
+          class="title"
+        >
+          {{ obj[language].key }}
+          Agent当前主要由社区维护，beta版本无法保证成功部署。
         </div>
         <div class="title">
           {{ $t('views.deploy.installing') }} {{ obj[language].key }}
@@ -38,7 +57,7 @@
             </div>
             <p
               v-for="(item, index) in obj[language].term"
-              :key="item"
+              :key="index"
               :style="{
                 textIndent: `${
                   language === 'java' && index > 1 ? '20px' : '0'
@@ -48,6 +67,96 @@
               <span>{{ item }}</span>
             </p>
           </div>
+        </div>
+        <div class="agentList">
+          <el-form label-position="left" label-width="90px" :model="agentForm">
+            <el-row>
+              <el-col :span="12">
+                <el-form-item
+                  :label="$t('views.deploy.entryName')"
+                  style="margin-bottom: 14px"
+                >
+                  <el-input
+                    v-model="agentForm.entryName"
+                    :placeholder="$t('views.deploy.entryNamePlaceholder')"
+                    clearable
+                    class="addUserInput"
+                    size="small"
+                    style="width: 240px"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="10">
+                <el-form-item
+                  label-width="90px"
+                  style="margin-bottom: 14px"
+                  :label="$t('views.deploy.projectTemplate')"
+                >
+                  <el-select
+                    v-model="agentForm.projectTemplate"
+                    class="addUserInput"
+                    clearable
+                    size="small"
+                    style="width: 180px"
+                  >
+                    <el-option
+                      v-for="(item, index) in projectList"
+                      :key="index"
+                      :label="item.template_name"
+                      :value="item.id"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <!-- <el-col :span="16">
+                <el-form-item label="Tag" prop="template_name">
+                  <div class="tagList" @click="tagclick">
+                    <span
+                      v-for="(item, index) in agentForm.tagList"
+                      :key="index"
+                      class="tagItem"
+                    >
+                      <span>{{ item }}</span>
+                      <el-button
+                        class="deletag"
+                        type="text"
+                        @click="deletag(item)"
+                        >x</el-button
+                      >
+                    </span>
+                    <el-input
+                      v-show="agentForm.tagshow"
+                      ref="agentTagInput"
+                      v-model="agentForm.tagOption"
+                      clearable
+                      class="addUserInput"
+                      size="mini"
+                      style="width: 120px"
+                      @blur="agentTagInputBlur"
+                      @change="agentTagChange"
+                    ></el-input>
+                  </div>
+                </el-form-item>
+              </el-col> -->
+              <el-col :span="12">
+                <el-form-item
+                  label-width="90px"
+                  :label="$t('views.deploy.projectVersion')"
+                >
+                  <el-input
+                    v-model="agentForm.version"
+                    :placeholder="$t('views.deploy.projectVersion')"
+                    clearable
+                    class="addUserInput"
+                    size="small"
+                    style="width: 240px"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
         </div>
         <div class="title-2 margin-t-24">
           <span class="icon-no">1</span>
@@ -141,18 +250,50 @@
               </el-tooltip>
             </div>
           </template>
+          <template v-if="language === 'go'">
+            <div class="title-3 margin-t-16">
+              1. {{ $t('views.deploy.go.ManualInstallation') }}
+            </div>
+            <div class="install-desc margin-t-8" style="margin-left: 12px">
+              {{ $t('views.deploy.go.manualInstallationDesc1') }}
+            </div>
+            <div class="install-desc margin-t-8" style="margin-left: 12px">
+              {{ $t('views.deploy.go.manualInstallationDesc2') }}
+            </div>
+            <div class="install-desc margin-t-8" style="margin-left: 12px">
+              {{ $t('views.deploy.go.manualInstallationDesc3') }}
+            </div>
+            <div class="install-desc margin-t-8" style="margin-left: 12px">
+              {{ $t('views.deploy.go.manualInstallationDesc4') }}
+            </div>
+            <div class="install-desc margin-t-8" style="margin-left: 24px">
+              {{ $t('views.deploy.go.manualInstallationDesc5') }}
+            </div>
+            <div class="install-desc margin-t-8" style="margin-left: 24px">
+              {{ $t('views.deploy.go.manualInstallationDesc6') }}
+            </div>
+            <div class="install-desc margin-t-8" style="margin-left: 24px">
+              {{ $t('views.deploy.go.manualInstallationDesc7') }}
+            </div>
+            <div class="install-desc margin-t-8" style="margin-left: 12px">
+              {{ $t('views.deploy.go.manualInstallationDesc8') }}
+            </div>
+            <div class="install-desc margin-t-8" style="margin-left: 12px">
+              {{ $t('views.deploy.go.manualInstallationDesc9') }}
+            </div>
+          </template>
 
           <template v-if="language === 'php'">
             <div class="title-3 margin-t-16">
               1. {{ $t('views.deploy.php.ManualInstallation') }}
             </div>
-            <div class="install-desc margin-t-8">
+            <div class="install-desc margin-t-8" style="margin-left: 12px">
               {{ $t('views.deploy.php.manualInstallationDesc1') }}
             </div>
-            <div class="install-desc margin-t-8">
+            <div class="install-desc margin-t-8" style="margin-left: 12px">
               {{ $t('views.deploy.php.manualInstallationDesc2') }}
             </div>
-            <div class="install-desc margin-t-8">
+            <div class="install-desc margin-t-8" style="margin-left: 12px">
               {{ $t('views.deploy.php.manualInstallationDesc3') }}
             </div>
           </template>
@@ -162,7 +303,10 @@
             </div>
             <div class="install-tabs">
               <el-tabs v-model="activeName" @tab-click="getMd">
-                <el-tab-pane label="SpringBoot" name="SpringBoot">
+                <el-tab-pane
+                  label="SpringBoot"
+                  name="Spring-boot/Netty/Jetty/Sofa"
+                >
                   <div class="install-tab-info margin-t-8">
                     <MyMarkdownIt
                       :content="md[activeName]"
@@ -178,14 +322,14 @@
                     ></MyMarkdownIt>
                   </div>
                 </el-tab-pane>
-                <el-tab-pane label="JBoss" name="JBoss">
+                <!-- <el-tab-pane label="JBoss" name="JBoss">
                   <div class="install-tab-info margin-t-8">
                     <MyMarkdownIt
                       :content="md[activeName]"
                       style="color: #747c8c"
                     ></MyMarkdownIt>
                   </div>
-                </el-tab-pane>
+                </el-tab-pane> -->
                 <el-tab-pane label="Jetty" name="Jetty">
                   <div class="install-tab-info margin-t-8">
                     <MyMarkdownIt
@@ -202,15 +346,23 @@
                     ></MyMarkdownIt>
                   </div>
                 </el-tab-pane>
-                <el-tab-pane label="WebLogic" name="WebLogic">
+                <!-- <el-tab-pane label="WebLogic" name="WebLogic">
                   <div class="install-tab-info margin-t-8">
                     <MyMarkdownIt
                       :content="md[activeName]"
                       style="color: #747c8c"
                     ></MyMarkdownIt>
                   </div>
-                </el-tab-pane>
-                <el-tab-pane label="WebSphere" name="WebSphere">
+                </el-tab-pane> -->
+                <!-- <el-tab-pane label="WebSphere" name="WebSphere">
+                  <div class="install-tab-info margin-t-8">
+                    <MyMarkdownIt
+                      :content="md[activeName]"
+                      style="color: #747c8c"
+                    ></MyMarkdownIt>
+                  </div>
+                </el-tab-pane> -->
+                <el-tab-pane label="东方通" name="东方通">
                   <div class="install-tab-info margin-t-8">
                     <MyMarkdownIt
                       :content="md[activeName]"
@@ -266,7 +418,7 @@
               </el-tabs>
             </div>
           </template>
-          <!-- 
+          <!--
           <template v-if="language === 'php'">
             <div class="title-3 margin-t-16">
               2. {{ $t('views.deploy.python.settings') }}
@@ -362,7 +514,7 @@
         </div>
         <div
           v-for="(item, index) in documents"
-          :key="item.id"
+          :key="index"
           class="help-list"
           :class="index ? 'margin-t-24' : 'margin-t-32'"
         >
@@ -390,12 +542,22 @@ import { Component } from 'vue-property-decorator'
 
 @Component({ name: 'Deploy' })
 export default class Deploy extends VueBase {
-  private activeName = 'SpringBoot'
+  private activeName = 'Spring-boot/Netty/Jetty/Sofa'
   private language = 'java'
   private token = ''
+  private defaultTemplate = ''
   private uri = window.location.origin + '/openapi'
   private documents = []
+  private tagOptions = []
   private md = {}
+  private agentForm: any = {
+    entryName: '',
+    department: '',
+    version: '',
+    projectTemplate: '',
+  }
+  private departmentList = []
+  private projectList = []
 
   private obj = {
     java: {
@@ -409,7 +571,7 @@ export default class Deploy extends VueBase {
         this.$t('views.deploy.java.term5'),
         this.$t('views.deploy.java.term6'),
       ],
-      download: 'java -jar agent.jar -m install -p <pid>',
+      download: 'java -jar dongtai-agent.jar -m install -p <pid>',
       video:
         'https://huoqi-public.oss-cn-beijing.aliyuncs.com/iast/install_java_agent.mp4',
     },
@@ -417,9 +579,15 @@ export default class Deploy extends VueBase {
       key: 'PYTHON',
       name: 'Python',
       term: [
+        this.$t('views.deploy.python.os'),
         this.$t('views.deploy.python.term1'),
         this.$t('views.deploy.python.term2'),
         this.$t('views.deploy.python.term3'),
+        this.$t('views.deploy.python.termA'),
+        this.$t('views.deploy.python.termAa'),
+        this.$t('views.deploy.python.termAb'),
+        this.$t('views.deploy.python.termAc'),
+        this.$t('views.deploy.python.termAd'),
         this.$t('views.deploy.python.term4'),
         this.$t('views.deploy.python.term4-1'),
         this.$t('views.deploy.python.term4-2'),
@@ -440,6 +608,14 @@ export default class Deploy extends VueBase {
       video:
         'https://huoqi-public.oss-cn-beijing.aliyuncs.com/iast/instatll_python_agent.mp4',
     },
+    go: {
+      key: 'GO',
+      name: 'GO',
+      term: [this.$t('views.deploy.go.term1')],
+      download: '',
+      video:
+        'https://huoqi-public.oss-cn-beijing.aliyuncs.com/iast/instatll_python_agent.mp4',
+    },
   }
   changeLanguage(language: string) {
     this.language = language
@@ -454,6 +630,11 @@ export default class Deploy extends VueBase {
       this.getDoc()
       return
     }
+    if (language === 'go') {
+      this.activeName = ''
+      this.getDoc()
+      return
+    }
     this.getDoc()
     this.getMd()
   }
@@ -461,11 +642,70 @@ export default class Deploy extends VueBase {
   get shell() {
     switch (this.language) {
       case 'java':
-        return `curl -X GET "${this.uri}/api/v1/agent/download?url=${this.uri}&language=java" -H 'Authorization: Token ${this.token}' -o agent.jar -k`
+        return `curl -X GET "${this.uri}/api/v1/agent/download?url=${
+          this.uri
+        }&language=java&token=${
+          this.agentForm.department || this.token
+        }&projectName=${
+          (this.agentForm.entryName && encodeURI(this.agentForm.entryName)) ||
+          'Demo%20Project'
+        }&projectVersion=${
+          (this.agentForm.version && encodeURI(this.agentForm.version)) ||
+          'V1.0'
+        }&template_id=${
+          this.agentForm.projectTemplate || this.defaultTemplate
+        }" -H "Authorization: Token ${
+          this.agentForm.department || this.token
+        }" -o dongtai-agent.jar -k`
+
       case 'python':
-        return `curl -X GET "${this.uri}/api/v1/agent/download?url=${this.uri}&language=python&projectName=Demo%20Project" -H 'Authorization: Token ${this.token}' -o dongtai-agent-python.tar.gz -k`
+        return `curl -X GET "${this.uri}/api/v1/agent/download?url=${
+          this.uri
+        }&language=python&token=${
+          this.agentForm.department || this.token
+        }&projectName=${
+          (this.agentForm.entryName && encodeURI(this.agentForm.entryName)) ||
+          'Demo%20Project'
+        }&projectVersion=${
+          (this.agentForm.version && encodeURI(this.agentForm.version)) ||
+          'V1.0'
+        }&template_id=${
+          this.agentForm.projectTemplate || this.defaultTemplate
+        }" -H "Authorization: Token ${
+          this.agentForm.department || this.token
+        }" -o dongtai-agent-python.tar.gz -k`
       case 'php':
-        return `curl -X GET "${this.uri}/api/v1/agent/download?url=${this.uri}&language=php" -H 'Authorization: Token ${this.token}' -o php-agent-test.tar.gz`
+        return `curl -X GET "${this.uri}/api/v1/agent/download?url=${
+          this.uri
+        }&language=php&token=${
+          this.agentForm.department || this.token
+        }&projectName=${
+          (this.agentForm.entryName && encodeURI(this.agentForm.entryName)) ||
+          'Demo%20Project'
+        }&projectVersion=${
+          (this.agentForm.version && encodeURI(this.agentForm.version)) ||
+          'V1.0'
+        }&template_id=${
+          this.agentForm.projectTemplate || this.defaultTemplate
+        }" -H "Authorization: Token ${
+          this.agentForm.department || this.token
+        }" -o php-agent.tar.gz`
+      case 'go':
+        return `curl -X GET "${this.uri}/api/v1/agent/download?url=${
+          this.uri
+        }&language=go&token=${
+          this.agentForm.department || this.token
+        }&projectName=${
+          (this.agentForm.entryName && encodeURI(this.agentForm.entryName)) ||
+          'Demo%20Project'
+        }&projectVersion=${
+          (this.agentForm.version && encodeURI(this.agentForm.version)) ||
+          'V1.0'
+        }&template_id=${
+          this.agentForm.projectTemplate || this.defaultTemplate
+        }" -H "Authorization: Token ${
+          this.agentForm.department || this.token
+        }" -o dongtai-go-agent-config.yaml`
     }
   }
   get pythonShell() {
@@ -475,6 +715,26 @@ export default class Deploy extends VueBase {
     window.open(url)
   }
 
+  private tagclick() {
+    this.agentForm.tagshow = true
+    this.$nextTick(() => {
+      ;(this.$refs.agentTagInput as any).focus()
+    })
+  }
+  private agentTagInputBlur() {
+    this.agentForm.tagshow = false
+  }
+  private agentTagChange() {
+    if (!this.agentForm.tagList.includes(this.agentForm.tagOption)) {
+      this.agentForm.tagList.push(this.agentForm.tagOption)
+    }
+    this.agentForm.tagOption = ''
+  }
+  private deletag(key: any) {
+    this.agentForm.tagList = this.agentForm.tagList.filter((item: any) => {
+      return item !== key
+    })
+  }
   private onCopy() {
     this.$message({
       message: '已复制',
@@ -505,7 +765,20 @@ export default class Deploy extends VueBase {
   }
 
   private async downloadAgent() {
-    await this.services.deploy.agentDownload(this.uri, this.language)
+    const url =
+      window.location.origin +
+      '/api/v1/agent/download?url=' +
+      window.location.origin +
+      '/openapi&language=' +
+      this.language +
+      `&token=${this.agentForm.department || this.token}&projectName=${
+        (this.agentForm.entryName && encodeURI(this.agentForm.entryName)) ||
+        'Demo%20Project'
+      }&projectVersion=${
+        (this.agentForm.version && encodeURI(this.agentForm.version)) || 'V1.0'
+      }&template_id=${this.agentForm.projectTemplate || this.defaultTemplate}`
+    console.log('url', url)
+    window.open(url)
   }
   private async getDoc() {
     const docRes = await this.services.deploy.getDocuments({
@@ -515,13 +788,20 @@ export default class Deploy extends VueBase {
       this.documents = docRes.data.documents
     }
   }
-  private async created() {
-    const res = await this.services.deploy.getToken()
+
+  private async getUserToken() {
+    const res = await this.services.user.userToken()
     if (res.status === 201) {
       this.token = res.data.token
     }
+  }
+
+  private async created() {
+    this.agentForm.entryName = 'Demo Project'
+    this.agentForm.version = 'V1.0'
     await this.getMd()
     await this.getDoc()
+    this.getUserToken()
   }
 }
 </script>
@@ -540,6 +820,32 @@ main {
     box-sizing: border-box;
     width: 795px;
     padding: 24px;
+    .agentList {
+      margin-top: 16px;
+      .tagList {
+        width: 360px;
+        line-height: 40px;
+        height: 40px;
+        border: 1px solid #c4c4c4;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 8px;
+        .tagItem {
+          width: fit-content;
+          color: #0969da;
+          background: #ddf4ff;
+          border-radius: 2em;
+          height: 26px;
+          line-height: 26px;
+          padding: 0 6px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+      }
+    }
     .language-box {
       padding: 16px 0;
       display: flex;
@@ -671,13 +977,13 @@ main {
   }
 }
 .install {
-  /deep/.el-tabs__item:hover {
+  ::v-deep.el-tabs__item:hover {
     color: #38435a;
   }
-  /deep/.el-tabs__item {
+  ::v-deep.el-tabs__item {
     color: #38435a;
   }
-  /deep/.el-tabs__active-bar {
+  ::v-deep.el-tabs__active-bar {
     color: #4a72ae;
     background-color: #4a72ae;
   }

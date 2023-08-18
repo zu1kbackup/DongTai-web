@@ -33,9 +33,18 @@ const actions: any = {
       return
     }
     flag = true
-    const { status, msg, data } = await userServices.getUserInfo()
+    const { status, infoMsg, data } = await userServices.getUserInfo()
     if (status !== 201) {
-      Message.error(msg)
+      Message({ message: infoMsg, type: 'error' })
+      const { status, msg } = await userServices.logout()
+      if (status !== 201) {
+        Message({ message: msg, type: 'error' })
+        return
+      }
+      context.commit('clearInfo')
+      window.localStorage.clear()
+      window.location.reload()
+      return
     }
     switch (data.role) {
       case 1:
@@ -53,14 +62,15 @@ const actions: any = {
   async logOut(context: { commit: Commit }) {
     const { status, msg } = await userServices.logout()
     if (status !== 201) {
-      Message.error(msg)
+      Message({ message: msg, type: 'error' })
+      return
     }
     context.commit('clearInfo')
     window.localStorage.clear()
-    router.push({ path: '/login' })
     window.location.reload()
   },
   clearInfo(context: { commit: Commit }) {
+    flag = false
     Cookie.expire('sessionid')
     Cookie.expire('DTCsrfToken')
     context.commit('UPDATE_USER_INFO', null)

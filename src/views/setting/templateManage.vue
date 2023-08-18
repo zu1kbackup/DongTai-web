@@ -30,7 +30,7 @@
           min-width="160px"
         >
           <template slot-scope="{ row }">
-            <div class="two-line vul_name" @click="toPath(1, row.id)">
+            <div class="vul_name" @click="toPath(1, row.id)">
               {{ row.name }}
             </div>
           </template>
@@ -45,7 +45,6 @@
           <template slot-scope="{ row }">
             <div style="cursor: pointer" @click="stateChange(row)">
               <el-switch
-                :disabled="userInfo.role !== 1 && userInfo.role !== 2"
                 :value="row.status === 1"
                 active-color="#1A80F2"
                 inactive-color="#C1C9D3"
@@ -55,10 +54,9 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="userInfo.role === 1 || userInfo.role === 2"
           :label="$t('views.templateManage.settings')"
-          width="160px"
           align="center"
+          width="200px"
         >
           <template slot-scope="{ row }">
             <div class="table-btn-box">
@@ -146,16 +144,12 @@ export default class templateManage extends VueBase {
 
   private async getTableData() {
     this.loadingStart()
-    const {
-      status,
-      msg,
-      data,
-      page,
-    } = await this.services.setting.get_scan_strategy({
-      page: this.page,
-      page_size: this.page_size,
-      name: this.name,
-    })
+    const { status, msg, data, page } =
+      await this.services.setting.get_scan_strategy({
+        page: this.page,
+        page_size: this.page_size,
+        name: this.name,
+      })
     this.loadingDone()
     if (status !== 201) {
       this.$message({
@@ -163,6 +157,11 @@ export default class templateManage extends VueBase {
         message: msg,
         showClose: true,
       })
+      return
+    }
+    if (data.length === 0 && this.page > 1) {
+      this.page--
+      await this.getTableData()
       return
     }
     this.tableData = data
@@ -221,7 +220,7 @@ export default class templateManage extends VueBase {
 </script>
 
 <style scoped lang="scss">
-/deep/.el-card__header {
+::v-deep.el-card__header {
   background: rgba(255, 150, 87, 0.1);
   padding: 8px !important;
   border-bottom: none;
@@ -238,13 +237,13 @@ export default class templateManage extends VueBase {
     }
   }
 }
-/deep/.el-card__body {
+::v-deep.el-card__body {
   background: rgba(255, 150, 87, 0.1);
   padding: 16px;
   padding-top: 0;
 }
 .content-warp {
-  padding: 38px 14px 40px 14px;
+  padding: 20px 14px 40px 14px;
 }
 .search-input {
   border-right: none;
@@ -252,7 +251,7 @@ export default class templateManage extends VueBase {
 .search-box {
   display: flex;
   align-items: center;
-  /deep/.el-input__inner {
+  ::v-deep.el-input__inner {
     border-right: none;
     border-radius: 0;
   }
@@ -303,18 +302,22 @@ export default class templateManage extends VueBase {
 .templateManageTable {
   margin-top: 16px;
   &.el-table {
-    /deep/th {
+    ::v-deepth {
       background: #f6f8fa;
     }
   }
 }
 .table-btn-box {
+  display: flex;
   justify-content: center;
   align-items: center;
+  .el-button {
+    font-size: 14px;
+  }
   .l {
     color: #38435a;
-    line-height: 13px;
-    padding: 10px 4px;
+    line-height: 14px;
+    padding: 4px 4px 8px 4px;
     display: inline-block;
   }
   .el-button + .el-button {

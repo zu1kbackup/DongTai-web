@@ -159,10 +159,11 @@ export default class LogManage extends VueBase {
       page: this.page,
       pageSize: this.pageSize,
     }
-
+    this.loadingStart()
     const { status, msg, data, total } = await this.services.setting.logList(
       params
     )
+    this.loadingDone()
     if (status !== 201) {
       this.$message({
         type: 'error',
@@ -206,6 +207,7 @@ export default class LogManage extends VueBase {
       showClose: true,
     })
     this.deleteDialogOpen = false
+    this.selectAllPage = false
     await this.getTableData()
   }
   private async logClear() {
@@ -288,7 +290,7 @@ main {
 
 .logListTable {
   &.el-table {
-    /deep/th {
+    ::v-deepth {
       background: #f6f8fa;
     }
   }

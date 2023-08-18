@@ -7,128 +7,59 @@
       <div class="slider-warp" :style="{ marginTop: projectId && '14px' }">
         <div class="title flex-column-center" style="height: 54px">
           <div class="flex-row-space-between">
-            <span style="font-size: 16px; font-weight: bold">{{
-              $t('views.vulnList.filter')
-            }}</span>
-            <el-button type="text" class="resetAllBtn" @click="reset">
-              <span style="font-size: 12px">{{
-                $t('views.vulnList.resetAll')
-              }}</span>
+            <span class="filter-title">过滤器 </span>
+            <el-button type="text" class="reset-btn" @click="reset">
+              <span>重置全部</span>
             </el-button>
           </div>
         </div>
-        <template v-if="!projectId">
-          <div
-            class="module-title flex-row-space-between"
-            style="margin-top: 14px; margin-bottom: 0px"
-          >
-            <span style="font-size: 14px">{{
-              $t('views.scaList.project_name')
-            }}</span>
-            <div class="reset-btn" @click="projectNameChange('')">
-              <span style="font-size: 14px">{{
-                $t('views.vulnList.reset')
-              }}</span>
-            </div>
-          </div>
-          <div class="search-box">
-            <el-autocomplete
-              v-model="kw"
-              size="small"
-              style="margin: 12px 0 0 0"
-              class="commonInput"
-              clearable
-              :placeholder="$t('views.scaList.searchName')"
-              :fetch-suggestions="querySearchAsync"
-              @select="handleSelect"
-            ></el-autocomplete>
-          </div>
-          <div
-            v-for="item in searchOptionsObj.projects"
-            :key="item.project_id"
-            class="flex-row-space-between module-line"
-            :class="searchObj.project_id === item.id ? 'selectedLine' : ''"
-            :style="
-              item.count === 0
-                ? { cursor: 'not-allowed', height: '30px' }
-                : { height: '30px' }
-            "
-            @click="projectNameChange(item.id, item.count === 0)"
-          >
-            <div class="selectOption" :title="item.project_name">
-              {{ projectNameSplit(item.project_name, 12)
-              }}{{ item.project_name.length > 12 ? '...' : '' }}
+        <div
+          v-if="searchOptionsObj.level.length"
+          class="module-title flex-row-space-between"
+        >
+          <span class="filter-box-title"> 等级 </span>
+        </div>
+        <el-checkbox
+          v-for="item in searchOptionsObj.level"
+          :key="item.level_id"
+          v-model="searchObj.level"
+          :label="item.level_id"
+          class="flex-row-space-between module-line"
+          @change="getTableData(true)"
+        >
+          <div class="check-label">
+            <div class="selectOption">
+              {{ item.level }}
             </div>
             <div class="num">
               {{ item.count }}
             </div>
           </div>
-        </template>
-        <div
-          class="module-title flex-row-space-between"
-          style="margin-top: 14px; margin-bottom: 0px"
-        >
-          <span style="font-size: 14px">
-            {{ $t('views.scaList.level') }}
-          </span>
-          <div class="reset-btn" @click="levelChange('')">
-            <span style="font-size: 14px">
-              {{ $t('views.vulnList.reset') }}
-            </span>
-          </div>
-        </div>
-        <div
-          v-for="item in searchOptionsObj.level"
-          :key="item.level_id"
-          class="flex-row-space-between module-line"
-          :class="searchObj.level === item.level_id ? 'selectedLine' : ''"
-          :style="
-            item.count === 0
-              ? { cursor: 'not-allowed', height: '30px' }
-              : { height: '30px' }
-          "
-          @click="levelChange(item.level_id, item.count === 0)"
-        >
-          <div class="selectOption">
-            {{ item.level }}
-          </div>
-          <div class="num">
-            {{ item.count }}
-          </div>
-        </div>
-        <div
-          class="module-title flex-row-space-between"
-          style="margin-top: 14px; margin-bottom: 0px"
-        >
-          <span style="font-size: 14px">
-            {{ $t('views.scaList.language') }}
-          </span>
+        </el-checkbox>
 
-          <div class="reset-btn" @click="levelChange('')">
-            <span style="font-size: 14px">
-              {{ $t('views.vulnList.reset') }}
-            </span>
-          </div>
-        </div>
         <div
+          v-if="searchOptionsObj.language.length"
+          class="module-title flex-row-space-between"
+        >
+          <span class="filter-box-title"> 语言 </span>
+        </div>
+        <el-checkbox
           v-for="item in searchOptionsObj.language"
           :key="item.language"
+          v-model="searchObj.language"
+          :label="item.language_id"
           class="flex-row-space-between module-line"
-          :class="searchObj.language === item.language ? 'selectedLine' : ''"
-          :style="
-            item.count === 0
-              ? { cursor: 'not-allowed', height: '30px' }
-              : { height: '30px' }
-          "
-          @click="languageChange(item.language, item.count === 0)"
+          @change="getTableData(true)"
         >
-          <div class="selectOption">
-            {{ item.language }}
+          <div class="check-label">
+            <div class="selectOption">
+              {{ item.language }}
+            </div>
+            <div class="num">
+              {{ item.count }}
+            </div>
           </div>
-          <div class="num">
-            {{ item.count }}
-          </div>
-        </div>
+        </el-checkbox>
       </div>
     </div>
 
@@ -138,38 +69,12 @@
     >
       <div class="sca-list">
         <div class="selectForm">
-          <!-- <el-select
-          v-model="searchObj.order"
-          style="width: 160px; font-size: 14px"
-          class="commonSelect"
-          :placeholder="$t('views.scaList.sort')"
-          clearable
-          @change="newSelectData"
-        >
-          <el-option
-            v-for="item in searchOptionsObj.orderOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select> -->
-          <el-select
-            v-model="searchObj.language"
-            :placeholder="$t('views.scaList.developLanguage')"
-            style="idth: 160px; font-size: 14px"
-            class="commonSelect"
-            clearable
-            @change="newSelectData"
-          >
-            <el-option label="JAVA" value="JAVA"></el-option>
-            <el-option label="PYTHON" value="PYTHON"></el-option>
-          </el-select>
           <div class="selectInput">
             <el-input
               v-model="searchObj.keyword"
-              style="width: 412px"
-              :placeholder="$t('views.scaList.searchExample')"
+              placeholder="请输入组件名称搜索"
               class="commonInput"
+              size="small"
               @keyup.enter.native="newSelectData"
             >
               <i
@@ -178,115 +83,66 @@
                 @click="newSelectData"
               />
             </el-input>
+
+            <div class="sort-box">
+              <el-select
+                v-model="searchObj.order"
+                size="small"
+                class="commonSelect vulnSelect"
+                placeholder="选择排序条件"
+                clearable
+                @change="newSelectData"
+              >
+                <el-option
+                  v-for="item in searchOptionsObj.orderOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+              <i
+                v-if="searchObj.sort === null"
+                class="el-icon-sort sort-btn"
+                @click="sortSelect(true)"
+              ></i>
+              <i
+                v-if="searchObj.sort === true"
+                class="el-icon-sort-up sort-btn"
+                @click="sortSelect(false)"
+              ></i>
+              <i
+                v-if="searchObj.sort === false"
+                class="el-icon-sort-down sort-btn"
+                @click="sortSelect(null)"
+              ></i>
+            </div>
           </div>
         </div>
         <el-table
           class="sca-list-table"
-          border
           :data="tableData"
           style="width: 100%; margin-top: 18px; cursor: pointer"
           @row-click="goDetail"
-          @sort-change="tableSort"
         >
           <el-table-column
-            :label="$t('views.scaList.tableHeaders.name')"
+            label="组件名称"
             prop="package_name"
-            sortable="custom"
             fixed="left"
-            show-overflow-tooltip
+            min-width="240"
           >
             <template slot-scope="{ row }">
-              {{ row.package_name }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('views.scaList.tableHeaders.version')"
-            prop="version"
-            :width="'110px'"
-            sortable="custom"
-            show-overflow-tooltip
-          >
-            <template slot-scope="{ row }">
-              {{ row.version }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('views.scaList.tableHeaders.path')"
-            prop="package_path"
-            sortable="custom"
-            show-overflow-tooltip
-          >
-            <template slot-scope="{ row }">
-              {{ row.package_path }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('views.scaList.tableHeaders.application')"
-            prop="project_name"
-            width="130px"
-          >
-            <template slot-scope="{ row }">
-              <div>
-                {{ row.project_name }}
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('views.scaList.tableHeaders.language')"
-            prop="language"
-            width="90px"
-          >
-            <template slot-scope="{ row }">
-              <div>
-                {{ row.language }}
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('views.scaList.tableHeaders.level')"
-            prop="level"
-            width="110px"
-            sortable="custom"
-          >
-            <template slot-scope="{ row }">
-              <div
-                :style="
-                  row.level_type === 1
-                    ? { color: '#EA7171' }
-                    : row.level_type === 2
-                    ? { color: '#F39D0A' }
-                    : row.level_type === 3
-                    ? { color: '#2E8FE9' }
-                    : row.level_type === 4
-                    ? { color: '#7BC1AB' }
-                    : ''
-                "
+              <span class="pkg-name"
+                >{{ row.package_name }} : {{ row.version }}</span
               >
-                {{ row.level }}
-              </div>
             </template>
           </el-table-column>
-          <el-table-column
-            :label="$t('views.scaList.tableHeaders.count')"
-            prop="vul_count"
-            width="110px"
-            sortable="custom"
-          >
+          <el-table-column label="漏洞" prop="license" width="300px">
             <template slot-scope="{ row }">
-              <div>
-                {{ row.vul_count }}
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('views.scaList.tableHeaders.time')"
-            prop="dt"
-            width="160px"
-            sortable="custom"
-          >
-            <template slot-scope="{ row }">
-              <div>
-                {{ formatTimestamp(row.dt) }}
+              <div class="danger-box">
+                <div class="height">{{ row.vul_critical_count }}</div>
+                <div class="middle">{{ row.vul_high_count }}</div>
+                <div class="low">{{ row.vul_medium_count }}</div>
+                <div class="info">{{ row.vul_low_count }}</div>
               </div>
             </template>
           </el-table-column>
@@ -295,9 +151,9 @@
           <el-pagination
             :page-sizes="[10, 20, 40, 50]"
             :page-size="pageSize"
-            :current-page="page"
-            layout=" prev, pager, next, jumper,sizes,total"
             :total="total"
+            :current-page="page"
+            layout=" prev, pager, next, sizes"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
           >
@@ -305,61 +161,130 @@
         </div>
       </div>
     </div>
+    <el-dialog
+      :visible.sync="dialogFlag"
+      custom-class="sca-dialog"
+      :show-close="false"
+      append-to-body
+      destroy-on-close
+      close-on-click-modal
+      width="980px"
+    >
+      <template slot="title">
+        <div class="sca-dialog-title-box">
+          <div class="top">{{ dialogInfo.package_name }}</div>
+          <span
+            class="el-icon-close close-btn"
+            @click="dialogFlag = false"
+          ></span>
+          <div class="bottom">
+            <div class="bottom-item">
+              <div class="label">语言</div>
+              <div class="info">{{ dialogInfo.language }}</div>
+            </div>
+            <div class="bottom-item">
+              <div class="label">当前版本</div>
+              <div class="info">{{ dialogInfo.version }}</div>
+            </div>
+            <div class="bottom-item">
+              <div class="label">安全版本</div>
+              <div class="info">
+                <div class="version-box">
+                  <p
+                    v-if="
+                      dialogInfo.safe_version_list &&
+                      dialogInfo.safe_version_list.length
+                    "
+                  >
+                    <el-popover placement="bottom" width="100" trigger="hover">
+                      <div
+                        v-for="(version, index) in dialogInfo.safe_version_list"
+                        :key="index"
+                        style="font-size: 12px; color: #51cb74; margin-top: 4px"
+                      >
+                        {{ version.version }}
+                      </div>
+                      <template slot="reference">
+                        <div>
+                          <span class="el-icon-user"></span>
+                          {{ dialogInfo.latest_safe_version || '暂无' }}
+                        </div>
+                      </template>
+                    </el-popover>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+      <ScaDialog v-if="dialogFlag" :dialog-info="dialogInfo"></ScaDialog>
+    </el-dialog>
   </main>
 </template>
 
 <script lang="ts">
 import { Component, Prop } from 'vue-property-decorator'
 import { formatTimestamp } from '@/utils/utils'
+import ScaDialog from './ScaDialog.vue'
 import VueBase from '@/VueBase'
 import { ScaListObj } from './types'
 import ScrollToTop from '@/components/scrollToTop/scrollToTop.vue'
 
-@Component({ name: 'ScaList', components: { ScrollToTop } })
+@Component({ name: 'ScaList', components: { ScrollToTop, ScaDialog } })
 export default class ScaList extends VueBase {
-  @Prop() version: number | undefined
-  @Prop(String) projectId!: string
+  @Prop() version: string | number | undefined
+  @Prop() projectId: any
+  private sortSelect(flag: any) {
+    this.searchObj.sort = flag
+    this.newSelectData()
+  }
+  total = 0
+
+  private dialogInfo = {}
+
   private debounceMyScroll: any
   private page = 1
   private pageSize = 10
-  private total = 0
   private dataEnd = false
   private tableData: Array<ScaListObj> = []
-  private searchOptionsObj = {
+  private searchOptionsObj: any = {
     language: [],
     level: [],
-    projects: [],
+    license: [],
     orderOptions: [
       {
         label: this.$t('views.scaList.orderOptions.level'),
         value: 'level',
       },
       {
-        label: this.$t('views.scaList.orderOptions.package_name'),
-        value: 'package_name',
-      },
-      {
-        label: this.$t('views.scaList.orderOptions.version'),
-        value: 'version',
-      },
-      {
-        label: this.$t('views.scaList.orderOptions.language'),
-        value: 'language',
-      },
-      {
-        label: this.$t('views.scaList.orderOptions.vul_count'),
+        label: '漏洞数量',
         value: 'vul_count',
       },
     ],
   }
 
-  private searchObj = {
-    language: '',
-    level: '',
-    project_name: '',
+  private levelColor(level: any) {
+    switch (level) {
+      case 1:
+        return { label: '高', color: '#E56363', bg: 'rgba(229, 99, 99, 0.1)' }
+      case 2:
+        return { label: '中', color: '#F49E0B', bg: 'rgba(244, 158, 11, 0.1)' }
+      case 3:
+        return { label: '低', color: '#2F90EA', bg: 'rgba(47, 144, 234, 0.1)' }
+      case 0:
+        return { label: '无', color: '#ABB2C0', bg: 'rgba(172, 180, 196, 0.1)' }
+    }
+  }
+
+  private searchObj: any = {
+    language: [],
+    level: [],
     keyword: '',
+    license: [],
+    project_id: undefined,
     order: '',
-    project_id: '',
+    sort: null,
   }
 
   created() {
@@ -368,24 +293,16 @@ export default class ScaList extends VueBase {
     }
   }
 
-  private tableSort(e: any) {
-    if (e.order == 'ascending') {
-      this.searchObj.order = e.prop
-    } else {
-      this.searchObj.order = '-' + e.prop
-    }
-    this.newSelectData()
-    //
-  }
-
   private reset() {
-    this.searchObj.language = ''
-    this.searchObj.level = ''
-    this.searchObj.project_name = ''
+    this.searchObj.language = []
+    this.searchObj.level = []
+    this.searchObj.order = ''
+    this.searchObj.sort = null
+    this.searchObj.license = []
+    this.searchObj.keyword = ''
     if (this.$route.name !== 'projectDetail/:pid') {
       this.searchObj.project_id = ''
     }
-    this.kw = ''
     this.newSelectData()
   }
 
@@ -404,10 +321,6 @@ export default class ScaList extends VueBase {
     }
   }
 
-  private handleSelect(item: any) {
-    this.projectNameChange(item.id, false)
-  }
-
   private languageChange(val: string, stop: boolean) {
     if (stop) {
       return
@@ -424,18 +337,9 @@ export default class ScaList extends VueBase {
     this.newSelectData()
   }
 
-  private projectNameChange(val: string, stop: boolean) {
-    if (stop) {
-      return
-    }
-    this.searchObj.project_id = val
-    this.newSelectData()
-  }
-
   private newSelectData() {
     this.page = 1
     this.tableData = []
-    this.scaSummary()
     this.getTableData()
   }
 
@@ -456,16 +360,31 @@ export default class ScaList extends VueBase {
     return formatTimestamp(val)
   }
   public async getTableData(flag?: undefined | boolean) {
-    const params = {
+    if (flag) {
+      this.page = 1
+    }
+    let sort = 'asc'
+    if (!this.searchObj.sort) {
+      sort = 'desc'
+    }
+    const params: any = {
       page: this.page,
-      pageSize: this.pageSize,
-      language: this.searchObj.language,
-      level: this.searchObj.level,
-      project_name: this.searchObj.project_name,
-      keyword: this.searchObj.keyword,
-      order: this.searchObj.order,
-      project_id: this.searchObj.project_id,
-      version_id: this.version,
+      page_size: this.pageSize,
+      language_ids: this.searchObj.language,
+      level_ids: this.searchObj.level,
+      license_ids: this.searchObj.license,
+      order: sort,
+      project_id: Number(this.projectId),
+      project_version_id: this.version,
+    }
+    if (this.searchObj.keyword) {
+      params.keyword = this.searchObj.keyword
+    }
+    if (this.searchObj.order) {
+      params.order_field = this.searchObj.order
+    }
+    if (!this.projectId) {
+      delete params.project_id
     }
     this.loadingStart()
     const { status, data, msg, page } = await this.services.sca.scaList(params)
@@ -478,21 +397,20 @@ export default class ScaList extends VueBase {
       })
       return
     }
-    this.total = page.alltotal
     this.tableData = data
+    this.total = page.alltotal
   }
 
   public async scaSummary() {
-    const params = {
-      language: this.searchObj.language,
-      level: this.searchObj.level,
-      project_name: this.searchObj.project_name,
+    const params: any = {
       keyword: this.searchObj.keyword,
-      order: this.searchObj.order,
-      project_id: this.searchObj.project_id,
-      version_id: this.version,
+    }
+    if (this.projectId || this.version) {
+      params.project_id = this.projectId
+      params.version_id = this.version
     }
     this.loadingStart()
+    console.log('params', params)
     const { status, data, msg } = await this.services.sca.scaSummary(params)
     this.loadingDone()
     if (status !== 201) {
@@ -505,11 +423,34 @@ export default class ScaList extends VueBase {
     }
     this.searchOptionsObj.language = data.language
     this.searchOptionsObj.level = data.level
-    this.searchOptionsObj.projects = data.projects
+    this.searchOptionsObj.license = data.license
   }
 
+  private dialogFlag = false
   private goDetail(row: any) {
-    this.$router.push(`/sca/scaDetail/${this.page}/${row.id}`)
+    // this.dialogInfo = row
+    // this.dialogFlag = true
+    console.log(row)
+    if (this.projectId) {
+      this.$router.push({
+        path: `/sca/scalistDetail/1/${row.id}`,
+        query: {
+          projectId: this.projectId,
+          package_name: row.package_name,
+          package_version: row.version,
+          language_id: row.language_id,
+        },
+      })
+      return
+    }
+    this.$router.push({
+      path: `/sca/scalistDetail/1/${row.id}`,
+      query: {
+        package_name: row.package_name,
+        package_version: row.version,
+        language_id: row.language_id,
+      },
+    })
   }
   projectNameSplit(name: string, total: number) {
     if (name.length > total) {
@@ -521,10 +462,116 @@ export default class ScaList extends VueBase {
 </script>
 
 <style scoped lang="scss">
+.flex-row-space-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.filter-title {
+  font-weight: 500;
+  font-size: 16px;
+  color: #38435a;
+}
+.filter-box-title {
+  padding: 10px 0;
+  color: #38435a;
+}
 .fixed-warp {
   position: fixed;
   top: 0;
   bottom: 0;
+}
+
+.commonInput {
+  flex: 1;
+}
+
+.pkg-name {
+  color: #1a80f2;
+}
+.version-box {
+  p {
+    display: block;
+    max-width: 100px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}
+.pkg-version {
+  font-size: 12px;
+  color: #51cb74;
+}
+.danger-box {
+  display: flex;
+  > div {
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 24px;
+    display: flex;
+  }
+  .height {
+    background: rgba(229, 99, 99, 0.1);
+    border-radius: 2px 0px 0px 2px;
+    color: #e56363;
+  }
+  .middle {
+    color: #f49e0b;
+    background: rgba(244, 158, 11, 0.1);
+  }
+  .low {
+    color: #2f90ea;
+    background: rgba(47, 144, 234, 0.1);
+  }
+  .info {
+    color: #abb2c0;
+    background: rgba(172, 180, 196, 0.1);
+    border-radius: 0px 2px 2px 0px;
+  }
+}
+
+.sort-box {
+  display: inline-flex;
+  align-items: center;
+}
+.sort-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #dcdfe6;
+  color: #606266;
+  display: inline-block;
+  background: #fff;
+  border-radius: 4px;
+  text-align: center;
+  line-height: 30px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.vulnSelect {
+  width: 134px;
+  margin-left: 8px;
+  ::v-deep.el-input__inner {
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+.sort-btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.selectInput {
+  display: flex;
+}
+
+.btn {
+  width: 72px;
+  height: 38px;
+  line-height: 0;
+  background: #4a72ae;
+  color: #fff;
 }
 
 .slider-warp {
@@ -532,30 +579,20 @@ export default class ScaList extends VueBase {
   margin-top: 78px;
   background: #fff;
   overflow: auto;
-  padding: 0 6px 20px 6px;
-  height: calc(100vh - 103px);
+  padding: 0 12px 20px 12px;
+  height: calc(100vh - 92px);
 
   .title {
-    height: 54px;
+    padding: 10px 0;
     border-bottom: 1px solid #e6e9ec;
     font-size: 18px;
     font-weight: normal;
-    color: #4a72ae;
-
-    .resetAllBtn {
-      width: 72px;
-      height: 28px;
-      line-height: 0;
-      background: #4a72ae;
-      border-radius: 2px;
-      color: #fff;
-    }
+    color: #38435a;
   }
 
   .module-title {
-    margin-top: 28px;
-    margin-bottom: 24px;
     font-size: 16px;
+    font-weight: 500;
     color: #38435a;
   }
 
@@ -566,38 +603,43 @@ export default class ScaList extends VueBase {
 
   .module-line {
     cursor: pointer;
-    padding-left: 5px;
-    height: 38px;
-    line-height: 38px;
-
-    &:hover {
-      background: #f6f8fa;
+    height: 32px;
+    line-height: 32px;
+    margin-right: 0;
+    ::v-deep.el-checkbox__label {
+      flex: 1;
+      .check-label {
+        display: flex;
+        justify-content: space-between;
+      }
     }
 
     .selectOption {
-      color: #4b99f1;
+      display: inline-block;
+      max-width: 100px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      color: #38435a;
       font-size: 14px;
+      font-weight: 400;
     }
 
     .num {
-      color: #959ea9;
+      color: #38435a;
       font-size: 14px;
+      font-weight: 400;
+    }
+    &.is-checked {
+      .selectOption {
+        color: #1a80f2;
+      }
+
+      .num {
+        color: #1a80f2;
+      }
     }
   }
-
-  .selectedLine {
-    background: #f6f8fa;
-
-    .selectOption {
-      color: #0366d6;
-    }
-  }
-}
-.dot {
-  width: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .main-warp {
   padding-top: 14px;
@@ -605,19 +647,13 @@ export default class ScaList extends VueBase {
 
   .selectForm {
     width: 100%;
-
-    .selectInput {
-      float: right;
-    }
   }
 }
-.search-box {
-  text-align: center;
-}
+
 .sca-list {
   background: #fff;
   margin-bottom: 24px;
-  padding: 6px 12px;
+  padding: 16px;
   .pagination {
     padding: 8px 0;
     display: flex;
@@ -627,11 +663,66 @@ export default class ScaList extends VueBase {
 .sca-list-table {
   margin-top: 16px;
   &.el-table {
-    /deep/th {
+    ::v-deepth {
       line-height: 0;
-      padding: 6px 0;
-      background: #f6f8fa;
+      color: #38435a;
+      background: #f2f3f5;
     }
   }
+}
+
+.sca-dialog-title-box {
+  .top {
+    color: #38435a;
+  }
+  .bottom {
+    display: flex;
+    margin-top: 16px;
+    justify-content: space-between;
+    .bottom-item {
+      display: flex;
+      flex: 1;
+      .label {
+        color: #acb4c4;
+      }
+      .info {
+        margin-left: 8px;
+        color: #38435a;
+      }
+    }
+  }
+}
+::v-deep.btn-quicknext {
+  & + .number {
+    display: none;
+  }
+}
+</style>
+
+<style lang="scss">
+.sca-dialog {
+  .el-dialog__header {
+    background: #fafafa;
+    box-shadow: inset 0px -1px 0px rgba(230, 233, 236, 0.5);
+    padding: 16px 24px;
+  }
+  .el-dialog__body {
+    padding: 0px 24px 16px 24px;
+  }
+  .close-btn {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    cursor: pointer;
+    &:hover {
+      color: #1a80f2;
+    }
+  }
+}
+
+.tag {
+  padding: 2px;
+  border-radius: 2px;
+  font-size: 12px;
 }
 </style>

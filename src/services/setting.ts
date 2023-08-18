@@ -4,11 +4,15 @@ import axios from 'axios'
 
 interface agentListParams {
   page: number
-  pageSize: number
+  page_size: number
 }
 
 export default () =>
   new (class {
+    enum(): Promise<iResponse> {
+      return request.get('/circuit_config/enum/all')
+    }
+
     agentUpdate(): Promise<iResponse> {
       return request.get('/agent/status/update', { timeout: 1000 })
     }
@@ -17,15 +21,72 @@ export default () =>
       return request.post('/agent/alias/modified', data)
     }
 
-    agentList(params: agentListParams): Promise<iResponse> {
-      return request.get('/agents', { params })
+    audit(data: any): Promise<iResponse> {
+      return request.post('/agent/audit', data)
+    }
+
+    // agentList(params: any): Promise<iResponse> {
+    //   return request.get('/agents', { params })
+    // agentList(params: agentListParams): Promise<iResponse> {
+    //   return request.get('/agents', { params })
+    // }
+
+    stat(params: any): Promise<iResponse> {
+      return request.get('/agents/stat', {
+        params,
+        baseURL: process.env.VUE_APP_BASE_API_V2,
+      })
+    }
+
+    summary(): Promise<iResponse> {
+      return request.get('/agents/summary', {
+        baseURL: process.env.VUE_APP_BASE_API_V2,
+      })
+    }
+
+    agentList(params: any): Promise<iResponse> {
+      return request.get('/agents', {
+        params,
+        baseURL: process.env.VUE_APP_BASE_API_V2,
+      })
     }
 
     agentInstall(params: { id: number }): Promise<iResponse> {
       return request.post('/agent/install', params)
     }
+    // 状态管理-保持变更
+    getDataClean(params: any): Promise<iResponse> {
+      return request.get('/systemmonitor/data_clean', {
+        params,
+      })
+    }
+    // 状态管理-修改变更
+    dataClean(params: any): Promise<iResponse> {
+      return request.post('/systemmonitor/data_clean', params)
+    }
+    // 状态管理-立即清理
+    dataCleanTask(params: any): Promise<iResponse> {
+      return request.post('/systemmonitor/data_clean/task', params)
+    }
+    
+    //获取交叉验证配置
+    getCrossValid(params: any): Promise<iResponse> {
+      return request.get('/dastvul/settings', {
+        params,
+      })
+    }
+    
+    // 更新交叉验证配置
+    updateCrossValid(params: any): Promise<iResponse> {
+      return request.post('/dastvul/settings', params)
+    }
 
-    agentUninstall(params: { id: number }): Promise<iResponse> {
+    // 扫描器文档
+    getDocuments(params: any): Promise<iResponse> {
+      return request.get(`/dastvul/settings/doc`, {params})
+    }
+
+    agentUninstall(params: any): Promise<iResponse> {
       return request.post('/agent/uninstall', params)
     }
 
@@ -142,6 +203,10 @@ export default () =>
       return request.get('/program_language')
     }
 
+    vulRecheckPayload(params: any): Promise<iResponse> {
+      return request.get('/vul_recheck_payload', { params })
+    }
+
     hookRuleList(params: {
       type: string
       page: number
@@ -159,6 +224,7 @@ export default () =>
     }): Promise<iResponse> {
       return request.get('/engine/hook/rule_types', { params })
     }
+
     ruleTypeAdd(params: {
       type: string
       name: string
@@ -168,26 +234,19 @@ export default () =>
       return request.post('/engine/hook/rule_type/add', params)
     }
 
-    ruleAdd(params: {
-      rule_type_id: string
-      rule_value: string
-      rule_source: string
-      rule_target: string
-      inherit: string
-      track: string
-    }): Promise<iResponse> {
+    ruleAdd(params: any): Promise<iResponse> {
       return request.post('/engine/hook/rule/add', params)
     }
-    modifyAdd(params: {
-      rule_id: number
-      rule_type_id: string
-      rule_value: string
-      rule_source: string
-      rule_target: string
-      inherit: string
-      track: string
-    }): Promise<iResponse> {
+    modifyAdd(params: any): Promise<iResponse> {
       return request.post('/engine/hook/rule/modify', params)
+    }
+
+    vul_recheck_payload(params: any): Promise<iResponse> {
+      return request.post('/vul_recheck_payload', params)
+    }
+
+    edit_vul_recheck_payload(data: any): Promise<iResponse> {
+      return request.put('/vul_recheck_payload/' + data.id, data)
     }
 
     ruleDisable(params: { rule_id: string }): Promise<iResponse> {
@@ -205,6 +264,15 @@ export default () =>
     changeStatus(params: any): Promise<iResponse> {
       return request.get('/engine/hook/rule/status', { params })
     }
+
+    changeVulStatus(data: any): Promise<iResponse> {
+      return request.put('/vul_recheck_payload/status', data)
+    }
+
+    delVulStatus(data: any): Promise<iResponse> {
+      return request.delete('/vul_recheck_payload/' + data.id)
+    }
+
     ruleDelete(params: { rule_id: string }): Promise<iResponse> {
       return request.get('/engine/hook/rule/delete', { params })
     }
@@ -286,6 +354,140 @@ export default () =>
     }
 
     nowVersion(): Promise<iResponse> {
-      return axios.get(`/version.txt`)
+      return axios.get(`/version.txt?v=` + Math.random())
+    }
+
+    versionlist(): Promise<iResponse> {
+      return request.get(`/version_control/versionlist`)
+    }
+
+    machinecode(): Promise<iResponse> {
+      return request.get(`/license/machinecode`)
+    }
+
+    isAuthenticated(): Promise<iResponse> {
+      return request.get(`/license/is_authenticated`)
+    }
+
+    uploadLicense(data: any): Promise<iResponse> {
+      return request.post(`/license/upload_license`, data)
+    }
+
+    detailLicense(): Promise<iResponse> {
+      return request.get(`/license/detail_license`)
+    }
+
+    currentConcurrency(): Promise<iResponse> {
+      return request.get(`/license/current_concurrency`)
+    }
+
+    get_sca_strategy(params: any): Promise<iResponse> {
+      return request.get(
+        `/scadb/maven/bulk?page=${params.page}&page_size=${params.page_size}&name=${params.name}`
+      )
+    }
+
+    edit_sca(data: any): Promise<iResponse> {
+      return request.put(`/scadb/maven/${data.id}`, data)
+    }
+
+    add_sca(data: any): Promise<iResponse> {
+      delete data.id
+      return request.post(`/scadb/maven`, data)
+    }
+
+    delete_sca(params: any): Promise<iResponse> {
+      return request.delete(`/scadb/maven/${params.id}`)
+    }
+
+    delete_sca_bulk(data: any): Promise<iResponse> {
+      return request.post(`/scadb/maven/bulk/delete`, data)
+    }
+
+    sca_stat(): Promise<iResponse> {
+      return request.get(`/scadb/maven/stat`)
+    }
+
+    get_license_list(): Promise<iResponse> {
+      return request.get(`/scadb/license_list`)
+    }
+
+    circuitPriority(row: any, data: any): Promise<iResponse> {
+      return request.put(`/circuit_config/${row.id}/priority`, data)
+    }
+
+    circuitReset(row: any): Promise<iResponse> {
+      return request.put(`/circuit_config/${row.id}/reset`)
+    }
+
+    get_threshold(): Promise<iResponse> {
+      return request.get(`/circuit_config`)
+    }
+
+    createCircuit(data: any): Promise<iResponse> {
+      return request.post(`/circuit_config`, data)
+    }
+
+    updateCircuit(data: any): Promise<iResponse> {
+      return request.put(`/circuit_config/` + data.id, data)
+    }
+    getCircuit(id: any): Promise<iResponse> {
+      return request.get(`/circuit_config/` + id)
+    }
+
+    save_threshold(data: any): Promise<iResponse> {
+      return request.post(`/threshold/settings`, data)
+    }
+    get_threshold_byid(id: any): Promise<iResponse> {
+      return request.get(`/threshold/settings/get/` + id)
+    }
+
+    del_threshold(data: any): Promise<iResponse> {
+      return request.delete(`/circuit_config/` + data.id)
+    }
+
+    webhook_type(): Promise<iResponse> {
+      return request.get(`/webhook/type/list`)
+    }
+
+    webhook_get(): Promise<iResponse> {
+      return request.get(`/webhook/settings/get`)
+    }
+    webhook_set(data: any): Promise<iResponse> {
+      return request.post(`/webhook/settings`, data)
+    }
+    webhook_delete(data: any): Promise<iResponse> {
+      return request.post(`/webhook/type/del`, data)
+    }
+    update_core(data: any): Promise<iResponse> {
+      return request.post(`/agent/core/update`, data)
+    }
+    log_export_batch(data: any): Promise<iResponse> {
+      return request.post(`/agent/log/batch`, data)
+    }
+
+    update_core_all(data: any): Promise<iResponse> {
+      return request.post(`/agent/core/update/all`, data)
+    }
+    // 配置模版
+    creatProjecttemplat(data: any): Promise<iResponse> {
+      return request.post(`/projecttemplate`, data)
+    }
+    listProjecttemplat(params: any): Promise<iResponse> {
+      return request.get(
+        `/projecttemplate?page=${params.page}&page_size=${params.page_size}`
+      )
+    }
+    getProjecttemplat(params: any): Promise<iResponse> {
+      return request.get(`/projecttemplate/${params.id}`)
+    }
+    putProjecttemplat(data: any): Promise<iResponse> {
+      return request.put(`/projecttemplate/` + data.id, data)
+    }
+    delProjecttemplat(data: any): Promise<iResponse> {
+      return request.delete(`/projecttemplate/` + data.id)
+    }
+    getEnum(): Promise<iResponse> {
+      return request.get('/hook_rule/enum', { timeout: 1000 })
     }
   })()

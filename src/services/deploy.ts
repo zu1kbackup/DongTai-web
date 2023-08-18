@@ -33,8 +33,12 @@ export default () =>
           link.href = window.URL.createObjectURL(blob)
           if (language === 'java') {
             link.download = 'agent.jar'
-          } else {
+          } else if (language === 'php') {
+            link.download = 'php-agent.tar.gz'
+          } else if (language === 'python') {
             link.download = 'dongtai-agent-python.tar.gz'
+          } else {
+            link.download = 'dongtai-go-agent-config.yaml'
           }
           link.click()
         })
@@ -55,5 +59,9 @@ export default () =>
     }
     getMD(params: any): Promise<iResponse> {
       return request.get('/agent/deploy', { params })
+    }
+    // // 部门token
+    getDepartment(params: any): Promise<iResponse> {
+      return request.get('/user/department/token')
     }
   })()

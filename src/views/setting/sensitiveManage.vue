@@ -1,7 +1,7 @@
 <template>
   <div class="content-warp">
     <div>
-      <el-card class="box-card">
+      <el-card class="box-card" shadow="never">
         <div slot="header" class="clearfix">
           <span
             >{{ $t('views.sensitiveManage.t')
@@ -12,9 +12,21 @@
           <p>
             {{ $t('views.sensitiveManage.p1') }}
           </p>
-          <p>{{ $t('views.sensitiveManage.p2') }}</p>
-          <p>{{ $t('views.sensitiveManage.p3') }}</p>
-          <p>
+          <p class="mgt-10">
+            {{ $t('views.sensitiveManage.p1-1') }}
+          </p>
+          <p class="text-indent">
+            {{ $t('views.sensitiveManage.p1-2') }}
+          </p>
+          <p class="text-indent">
+            {{ $t('views.sensitiveManage.p1-3') }}
+          </p>
+          <p class="text-indent">
+            {{ $t('views.sensitiveManage.p1-4') }}
+          </p>
+          <p class="mgt-10">{{ $t('views.sensitiveManage.p2') }}</p>
+          <p class="text-indent">{{ $t('views.sensitiveManage.p3') }}</p>
+          <p class="text-indent">
             {{ $t('views.sensitiveManage.p4') }}
           </p>
         </div>
@@ -44,14 +56,19 @@
           </el-button>
         </div>
       </div>
-      <el-table :data="tableData" class="sensitiveManageTable" border>
+      <el-table
+        :data="tableData"
+        class="sensitiveManageTable"
+        border
+        row-key="id"
+      >
         <el-table-column
           :label="$t('views.sensitiveManage.name')"
           prop="vul_name"
-          width="160px"
+          min-width="160px"
         >
           <template slot-scope="{ row }">
-            <div class="two-line">
+            <div>
               {{ row.strategy_name }}
             </div>
           </template>
@@ -86,13 +103,12 @@
         <el-table-column
           :label="$t('views.sensitiveManage.status')"
           prop="state"
-          width="140px"
+          min-width="140px"
           align="center"
         >
           <template slot-scope="{ row }">
             <div style="cursor: pointer" @click="stateChange(row)">
               <el-switch
-                :disabled="userInfo.role !== 1 && userInfo.role !== 2"
                 :value="row.status === 1"
                 active-color="#1A80F2"
                 inactive-color="#C1C9D3"
@@ -102,9 +118,8 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="userInfo.role === 1 || userInfo.role === 2"
           :label="$t('views.sensitiveManage.settings')"
-          width="160px"
+          min-width="160px"
           align="center"
         >
           <template slot-scope="{ row }">
@@ -160,6 +175,9 @@ export default class sensitiveManage extends VueBase {
   private total = 0
   private name = ''
   private async stateChange(row: any) {
+    // if (this.userInfo.role !== 1 && this.userInfo.role !== 2) {
+    //   return
+    // }
     this.loadingStart()
     const res = await this.services.setting.update_sensitive_info_rule({
       ...row,
@@ -190,7 +208,7 @@ export default class sensitiveManage extends VueBase {
     await this.getTableData()
     this.loadingDone()
   }
-  get userInfo(): { username: string } {
+  get userInfo(): { username: string; role: number } {
     return this.$store.getters.userInfo
   }
 
@@ -210,16 +228,12 @@ export default class sensitiveManage extends VueBase {
   }
   private async getTableData() {
     this.loadingStart()
-    const {
-      status,
-      msg,
-      data,
-      page,
-    } = await this.services.setting.get_sensitive_info_rule({
-      page: this.page,
-      page_size: this.page_size,
-      name: this.name,
-    })
+    const { status, msg, data, page } =
+      await this.services.setting.get_sensitive_info_rule({
+        page: this.page,
+        page_size: this.page_size,
+        name: this.name,
+      })
     this.loadingDone()
     if (status !== 201) {
       this.$message({
@@ -227,6 +241,11 @@ export default class sensitiveManage extends VueBase {
         message: msg,
         showClose: true,
       })
+      return
+    }
+    if (data.length === 0 && this.page > 1) {
+      this.page--
+      await this.getTableData()
       return
     }
     this.tableData = data
@@ -274,7 +293,7 @@ export default class sensitiveManage extends VueBase {
 </script>
 
 <style scoped lang="scss">
-/deep/.el-card__header {
+::v-deep.el-card__header {
   background: rgba(255, 150, 87, 0.1);
   padding: 8px !important;
   border-bottom: none;
@@ -291,7 +310,7 @@ export default class sensitiveManage extends VueBase {
     }
   }
 }
-/deep/.el-card__body {
+::v-deep.el-card__body {
   background: rgba(255, 150, 87, 0.1);
   padding: 16px;
   padding-top: 0;
@@ -305,7 +324,7 @@ export default class sensitiveManage extends VueBase {
 .search-box {
   display: flex;
   align-items: center;
-  /deep/.el-input__inner {
+  ::v-deep.el-input__inner {
     border-right: none;
     border-radius: 0;
   }
@@ -317,9 +336,15 @@ export default class sensitiveManage extends VueBase {
   border-radius: 2px;
   color: #fff;
   &.search {
-    height: 34px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    height: 32px;
     margin-left: -1px;
   }
+}
+.box-card {
+  color: #38435a;
+  border: none;
 }
 .btn-border {
   border-radius: 2px;
@@ -356,22 +381,32 @@ export default class sensitiveManage extends VueBase {
 .sensitiveManageTable {
   margin-top: 16px;
   &.el-table {
-    /deep/th {
+    ::v-deepth {
       background: #f6f8fa;
     }
   }
 }
 .table-btn-box {
+  display: flex;
   justify-content: center;
   align-items: center;
+  .el-button {
+    font-size: 14px;
+  }
   .l {
     color: #38435a;
-    line-height: 13px;
-    padding: 10px 4px;
+    line-height: 14px;
+    padding: 4px 4px 8px 4px;
     display: inline-block;
   }
   .el-button + .el-button {
     margin-left: 0;
   }
+}
+.text-indent {
+  text-indent: 2em;
+}
+.mgt-10 {
+  margin-top: 10px;
 }
 </style>

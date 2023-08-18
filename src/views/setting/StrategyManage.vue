@@ -37,7 +37,7 @@
       <el-table-column
         :label="$t('views.strategyManage.level')"
         prop="level_id"
-        width="200px"
+        min-width="200px"
         align="center"
       >
         <template slot-scope="{ row }">
@@ -48,15 +48,15 @@
       </el-table-column>
 
       <el-table-column
-        v-if="userInfo.role === 1 || userInfo.role === 2"
         :label="$t('views.strategyManage.status')"
         prop="state"
-        width="140px"
+        min-width="140px"
         align="center"
       >
         <template slot-scope="{ row }">
           <div @click="stateChange(row.id, row.state)">
             <el-switch
+              :disabled="userInfo.role !== 1 && userInfo.role !== 2"
               :value="row.state === 'enable'"
               active-color="#1A80F2"
               inactive-color="#C1C9D3"
@@ -68,7 +68,7 @@
       <el-table-column
         v-if="userInfo.role === 1 || userInfo.role === 2"
         :label="$t('views.strategyManage.settings')"
-        width="160px"
+        min-width="160px"
         align="center"
       >
         <template slot-scope="{ row }">
@@ -222,7 +222,7 @@ export default class StrategyManage extends VueBase {
       vul_fix: '',
     }
   }
-  get userInfo(): { username: string } {
+  get userInfo(): { username: string; role: number } {
     return this.$store.getters.userInfo
   }
 
@@ -300,16 +300,12 @@ export default class StrategyManage extends VueBase {
 
   private async getTableData() {
     this.loadingStart()
-    const {
-      status,
-      msg,
-      data,
-      page,
-    } = await this.services.setting.strategyList(false, {
-      page: this.page,
-      page_size: this.page_size,
-      name: this.searchValue,
-    })
+    const { status, msg, data, page } =
+      await this.services.setting.strategyList(false, {
+        page: this.page,
+        page_size: this.page_size,
+        name: this.searchValue,
+      })
     this.loadingDone()
     if (status !== 201) {
       this.$message({
@@ -319,11 +315,19 @@ export default class StrategyManage extends VueBase {
       })
       return
     }
+    if (data.length === 0 && this.page > 1) {
+      this.page--
+      await this.getTableData()
+      return
+    }
     this.total = page.alltotal
     this.tableData = data
   }
 
   private async stateChange(id: number, state: string) {
+    if (this.userInfo.role !== 1 && this.userInfo.role !== 2) {
+      return
+    }
     if (state === 'enable') {
       this.loadingStart()
       const { status, msg } = await this.services.setting.strategyDisable(id)
@@ -372,7 +376,7 @@ export default class StrategyManage extends VueBase {
 .search-box {
   display: flex;
   align-items: center;
-  /deep/.el-input__inner {
+  ::v-deep.el-input__inner {
     border-right: none;
     border-radius: 0;
   }
@@ -395,14 +399,7 @@ export default class StrategyManage extends VueBase {
   }
 }
 .two-line {
-  letter-spacing: 0;
-  width: 140px;
-  overflow: hidden;
-  display: -webkit-box;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 2; /*要显示的行数*/
-  -webkit-box-orient: vertical;
-  font-size: 12px;
+  font-size: 14px;
 }
 .total-bar {
   display: flex;
@@ -422,7 +419,7 @@ export default class StrategyManage extends VueBase {
 .strategyManageTable {
   margin-top: 16px;
   &.el-table {
-    /deep/th {
+    ::v-deepth {
       background: #f6f8fa;
     }
   }
@@ -431,10 +428,13 @@ export default class StrategyManage extends VueBase {
   display: flex;
   justify-content: center;
   align-items: center;
+  .el-button {
+    font-size: 14px;
+  }
   .l {
     color: #38435a;
-    line-height: 13px;
-    padding: 10px 4px;
+    line-height: 14px;
+    padding: 4px 4px 8px 4px;
     display: inline-block;
   }
   .el-button + .el-button {

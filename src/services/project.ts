@@ -7,14 +7,6 @@ interface ProjectListParams {
   name: string
 }
 
-interface ProjectAddParams {
-  pid?: number | string
-  name: string
-  mode: string
-  agent_ids: string
-  scan_id: number
-}
-
 export default () =>
   new (class {
     // 项目列表
@@ -43,7 +35,7 @@ export default () =>
     }
 
     //新增项目 编辑
-    projectAdd(params: ProjectAddParams): Promise<iResponse> {
+    projectAdd(params: any): Promise<iResponse> {
       return request.post('/project/add', params)
     }
 
@@ -85,22 +77,28 @@ export default () =>
       return request.get('/api_route/relationrequest', { params })
     }
 
-    //项目详情 - 漏洞验证
-    projectsRecheck(id: string): Promise<iResponse> {
-      return request.get(`/vul/recheck?projectId=${id}`)
+    req_headers(params: any): Promise<iResponse> {
+      return request.get(`/project/${params.id}/api_test/req_headers`)
     }
-
-    async_add(params: any): Promise<iResponse> {
-      return request.post(`/project/report/async_add`, params)
-    }
-
-    exportList(params: any): Promise<iResponse> {
+    getRecognizeRule(data: any): Promise<iResponse> {
       return request.get(
-        `project/report/list?page=${params.page}&page_size=${params.pageSize}&pid=${params.pid}`
+        `/project/recognize_rule?page=${data.page}&page_size=${data.pageSize}&project_id=${data.project_id}&rule_type=${data.rule_type}`
       )
     }
-
-    exportDelete(params: any): Promise<iResponse> {
-      return request.post(`/project/report/delete`, params)
+    postRecognizeRule(data: any): Promise<iResponse> {
+      return request.post(`/project/recognize_rule`, data)
+    }
+    deleteRecognizeRule(params: any): Promise<iResponse> {
+      return request.delete(`/project/recognize_rule`, { data: params })
+    }
+    getRecognizeRuleById(id: any): Promise<iResponse> {
+      return request.get(`/project/recognize_rule/${id}`)
+    }
+    putRecognizeRuleById(data: any): Promise<iResponse> {
+      return request.put(`/project/recognize_rule/${data.rule_id}`, {
+        rule_detail: data.rule_detail,
+        project_id: data.project_id,
+        rule_type: data.rule_type,
+      })
     }
   })()

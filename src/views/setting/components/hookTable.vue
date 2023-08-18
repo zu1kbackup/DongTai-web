@@ -40,11 +40,11 @@
           class="resetAllBtn"
           @click="hookTypeDialog = true"
           ><i class="el-icon-plus"></i>
-          {{ $t('views.hookPage.addHookType') }}</el-button
+           添加规则类型</el-button
         >
         <el-button size="small" class="resetAllBtn" @click="hookDialog = true"
           ><i class="el-icon-plus"></i>
-          {{ $t('views.hookPage.addHook') }}</el-button
+          添加规则</el-button
         >
       </div>
     </div>
@@ -59,19 +59,22 @@
           size="small"
           class="resetAllBtn open"
           @click="changeStatusBatch('enable')"
-          >{{ $t('views.hookPage.on') }}</el-button
+          >{{ multipleSelection.length ? '' : $t('views.hookPage.all')
+          }}{{ $t('views.hookPage.on') }}</el-button
         >
         <el-button
           size="small"
           class="resetAllBtn stop"
           @click="changeStatusBatch('disable')"
-          >{{ $t('views.hookPage.off') }}</el-button
+          >{{ multipleSelection.length ? '' : $t('views.hookPage.all')
+          }}{{ $t('views.hookPage.off') }}</el-button
         >
         <el-button
           size="small"
           class="resetAllBtn delete"
           @click="changeStatusBatch('delete')"
-          >{{ $t('views.hookPage.del') }}</el-button
+          >{{ multipleSelection.length ? '' : $t('views.hookPage.all')
+          }}{{ $t('views.hookPage.del') }}</el-button
         >
       </div>
     </div>
@@ -178,45 +181,48 @@
         prop="address"
         :label="$t('views.hookPage.address')"
         align="center"
-        width="100"
+        width="200"
         :fixed="tableData.length ? 'right' : false"
       >
         <template slot-scope="scope">
-          <el-button
-            type="text"
-            size="small"
-            style="color: #4a72ae"
-            @click="editRow(scope.row)"
-          >
-            {{ $t('views.hookPage.edit') }}
-          </el-button>
-          <el-popconfirm
-            :title="$t('views.hookPage.delpop')"
-            @confirm="changeStatus(scope.row, 'delete')"
-          >
+          <div class="table-btn-box">
             <el-button
-              slot="reference"
-              style="margin-left: 6px; color: #f56262"
-              size="small"
               type="text"
-              >{{ $t('views.hookPage.del') }}</el-button
+              size="small"
+              style="color: #4a72ae"
+              @click="editRow(scope.row)"
             >
-          </el-popconfirm>
+              {{ $t('views.hookPage.edit') }}
+            </el-button>
+            <span class="l"> | </span>
+            <el-popconfirm
+              :title="$t('views.hookPage.delpop')"
+              @confirm="changeStatus(scope.row, 'delete')"
+            >
+              <el-button
+                slot="reference"
+                style="color: #f56262"
+                size="small"
+                type="text"
+                >{{ $t('views.hookPage.del') }}</el-button
+              >
+            </el-popconfirm>
+          </div>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-pagination
-      :current-page="currentPage"
-      :page-sizes="[10, 20, 30, 50]"
-      :page-size="pageSize"
-      background
-      layout=" prev, pager, next, jumper,total, sizes"
-      :total="total"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    >
-    </el-pagination>
+      <el-pagination
+        :current-page="currentPage"
+        :page-sizes="[10, 20, 30, 50]"
+        :page-size="pageSize"
+        background
+        layout=" prev, pager, next, jumper,total, sizes"
+        :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      >
+      </el-pagination>
 
     <el-dialog :visible.sync="hookTypeDialog">
       <el-form
@@ -267,9 +273,9 @@
       <el-form
         :model="hook"
         size="small"
-        :label-width="$i18n.locale === 'en' ? '140px' : '80px'"
+        :label-width="$i18n.locale === 'en' ? '160px' : '100px'"
       >
-        <el-form-item :label="$t('views.hookPage.hookType')">
+        <el-form-item label="规则集">
           <span>{{ fmtType(hook.type) }}</span>
         </el-form-item>
         <el-form-item :label="$t('views.hookPage.hooksType')">
@@ -350,6 +356,7 @@
             </div>
           </el-form-item>
         </template>
+        <template v-if="ruleType !== '3'">
         <template v-for="(item, key) in hook.target">
           <el-form-item
             :key="'target' + key"
@@ -407,6 +414,7 @@
             </div>
           </el-form-item>
         </template>
+        </template>
         <el-form-item :label="$t('views.hookPage.hookTrack')">
           <el-radio v-model="hook.inherit" selected label="false">{{
             $t('views.hookPage.onlyNow')
@@ -418,6 +426,45 @@
             $t('views.hookPage.nowChildren')
           }}</el-radio>
         </el-form-item>
+        <el-form-item v-if="ruleType !== '3'" :label="$t('views.hookPage.ignoreInternal')">
+          <el-checkbox v-model="hook.ignore_internal"></el-checkbox>
+        </el-form-item>
+        <el-form-item :label="$t('views.hookPage.ignoreBlacklist')">
+          <el-checkbox v-model="hook.ignore_blacklist"></el-checkbox>
+        </el-form-item>
+        <template v-if="hookType.type != '3'">
+          <el-form-item :label="$t('views.hookPage.stainTag')">
+            <el-select
+              style="width:100%"
+              v-model="hook.tags"
+              multiple
+              :placeholder="$t('views.hookPage.selectTag')">
+              <el-option
+                v-for="(t,k) in tagsList"
+                :key="k"
+                :label="t"
+                :value="t">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('views.hookPage.stainUntag')" v-if="hookType.type == '1'">
+            <el-select
+              style="width:100%"
+              v-model="hook.untags"
+              multiple
+              :placeholder="$t('views.hookPage.selectTag')">
+              <el-option
+                v-for="(t,k) in tagsList"
+                :key="k"
+                :label="t"
+                :value="t">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('views.hookPage.stainRange')">
+            <el-input type="text" v-model="hook.command"></el-input>
+          </el-form-item>
+        </template>
       </el-form>
       <template slot="footer">
         <el-button size="small" @click="clearHook">{{
@@ -447,6 +494,13 @@ export default class HookTable extends VueBase {
   @Prop({ default: '0', type: String }) ruleType!: string
   @Prop({ default: 1, type: Number }) activeLanguage!: number
   @Prop({ default: '', type: String }) activeLanguageName!: string
+  @Prop({
+    default: function () {
+      return true
+    },
+    type: Function,
+  })
+  getBase!: any
   keyword = ''
   rule_type = ''
   hookTypeDialog = false
@@ -472,6 +526,11 @@ export default class HookTable extends VueBase {
     source: [{ relation: '', origin: '', param: '' }],
     target: [{ relation: '', origin: '', param: '' }],
     inherit: 'false',
+    ignore_internal: false,
+    ignore_blacklist: false,
+    tags: [],
+    untags: [],
+    command: '',
   }
   relations = [
     { label: this.$t('views.hookPage.or'), value: '|' },
@@ -486,7 +545,7 @@ export default class HookTable extends VueBase {
   pageSize = 20
   currentPage = 1
   total = 0
-
+  tagsList = []
   splitAndIn(str: string, key: string) {
     const arr = str.split(key)
     for (let i = 0; i < arr.length; i++) {
@@ -571,6 +630,11 @@ export default class HookTable extends VueBase {
     this.hook.target = target
     this.hook.rule_type_id = row.rule_type_id
     this.hookDialog = true
+    this.hook.ignore_internal = row.ignore_internal
+    this.hook.ignore_blacklist = row.ignore_blacklist
+    this.hook.tags = row.tags
+    this.hook.untags = row.untags
+    this.hook.command = row.command
   }
   async getTypes() {
     this.loadingStart()
@@ -646,35 +710,63 @@ export default class HookTable extends VueBase {
         cancelButtonText: this.$t('views.hookPage.clear') as string,
         type: 'warning',
       }
-    ).then(async () => {
-      if (this.multipleSelection.length === 0) {
-        this.$message({
-          type: 'warning',
-          message: this.$t('views.hookPage.changeWarning') as string,
-          showClose: true,
+    )
+      .then(async () => {
+        if (this.multipleSelection.length === 0) {
+          this.changeStatusAll(op)
+          return
+        }
+        const ids = this.multipleSelection.map((item: any) => item.id)
+        const { status, msg } = await this.services.setting.changeStatusBatch({
+          ids: String(ids),
+          op,
         })
-        return
-      }
-      const ids = this.multipleSelection.map((item: any) => item.id)
-      const { status, msg } = await this.services.setting.changeStatusBatch({
-        ids: String(ids),
-        op,
-      })
-      if (status !== 201) {
+        if (status !== 201) {
+          this.$message({
+            type: 'error',
+            message: msg,
+            showClose: true,
+          })
+          return
+        }
         this.$message({
-          type: 'error',
+          type: 'success',
           message: msg,
           showClose: true,
         })
-        return
-      }
-      this.$message({
-        type: 'success',
-        message: msg,
-        showClose: true,
+        await this.getBase()
+        await this.getTable()
       })
-      await this.getTable()
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
+  async changeStatusAll(status: string) {
+    this.loadingStart()
+    const obj = await this.services.setting.changeStatus({
+      scope: 'all',
+      op: status,
+      language_id: this.activeLanguage,
+      hook_rule_type: this.ruleType,
     })
+    this.loadingDone()
+    if (obj.status !== 201) {
+      this.$message({
+        showClose: true,
+        message: obj.msg,
+        type: 'error',
+      })
+      return
+    }
+    this.$message({
+      showClose: true,
+      message: obj.msg,
+      type: 'success',
+    })
+    this.currentPage = 1
+    await this.getBase()
+    await this.getTable()
   }
 
   async changeStatus(row: any, status = '') {
@@ -692,6 +784,7 @@ export default class HookTable extends VueBase {
       })
       return
     }
+    await this.getBase()
     await this.getTable()
   }
 
@@ -724,15 +817,15 @@ export default class HookTable extends VueBase {
   }
   fmtType(type: string) {
     switch (type) {
-      case '1':
+      case '1':  // 传播方法规则
         return this.$t('views.hookPage.spreadType') as string
-      case '2':
+      case '2':  // 污染源方法规则
         return this.$t('views.hookPage.contaminatedType') as string
-      case '3':
+      case '3':  // 过滤方法规则
         return this.$t('views.hookPage.filterType') as string
-      case '4':
+      case '4':  // 危险方法规则
         return this.$t('views.hookPage.dangerType') as string
-      case '5':
+      case '5': // 入口方法规则
         return this.$t('views.hookPage.enterType') as string
     }
   }
@@ -745,6 +838,11 @@ export default class HookTable extends VueBase {
       source: [{ relation: '', origin: '', param: '' }],
       target: [{ relation: '', origin: '', param: '' }],
       inherit: 'false',
+      ignore_internal: false,
+      ignore_blacklist: false,
+      tags: [],
+      untags: [],
+      command: ''
     }
     this.hookDialog = false
   }
@@ -766,15 +864,22 @@ export default class HookTable extends VueBase {
     if (this.hook.id) {
       this.loadingStart()
       const rule_source = this.fmtParams(this.hook.source)
-      const rule_target = this.fmtParams(this.hook.target)
+      const rule_target: any = this.fmtParams(this.hook.target)
       const { status, msg } = await this.services.setting.modifyAdd({
         rule_id: this.hook.id,
         rule_type_id: this.hook.rule_type_id,
         rule_value: this.hook.rule_value,
-        rule_target: rule_target,
+        rule_target: rule_target || undefined,
         rule_source: rule_source,
         inherit: this.hook.inherit,
         track: 'false',
+        language_id: this.activeLanguage,
+        ignore_internal: this.hook.ignore_internal || undefined,
+        ignore_blacklist: this.hook.ignore_blacklist,
+        tags: this.hook.tags,
+        untags: this.hook.untags,
+        command: this.hook.command,
+        type: Number(this.ruleType)
       })
 
       this.loadingDone()
@@ -786,6 +891,7 @@ export default class HookTable extends VueBase {
         })
         return
       }
+      this.$message.success('操作成功')
       await this.getTable()
       this.clearHook()
     } else {
@@ -795,10 +901,17 @@ export default class HookTable extends VueBase {
       const { status, msg } = await this.services.setting.ruleAdd({
         rule_type_id: this.hook.rule_type_id,
         rule_value: this.hook.rule_value,
-        rule_target: rule_target,
+        rule_target: rule_target || undefined,
         rule_source: rule_source,
         inherit: this.hook.inherit,
         track: 'false',
+        language_id: this.activeLanguage,
+        ignore_internal: this.hook.ignore_internal || undefined,
+        ignore_blacklist: this.hook.ignore_blacklist,
+        tags: this.hook.tags,
+        untags: this.hook.untags,
+        command: this.hook.command,
+        type: Number(this.ruleType)
       })
 
       this.loadingDone()
@@ -810,25 +923,24 @@ export default class HookTable extends VueBase {
         })
         return
       }
+      console.log('操作成功')
+      this.$message.success('操作成功')
+      await this.getBase()
       await this.getTable()
       this.clearHook()
     }
   }
   async getTable() {
     this.loadingStart()
-    const {
-      status,
-      msg,
-      data,
-      page,
-    } = await this.services.setting.hookRuleList({
-      page: this.currentPage,
-      pageSize: this.pageSize,
-      type: this.ruleType,
-      strategy_type: this.rule_type,
-      language_id: this.activeLanguage,
-      keyword: this.keyword,
-    })
+    const { status, msg, data, page } =
+      await this.services.setting.hookRuleList({
+        page: this.currentPage,
+        pageSize: this.pageSize,
+        type: this.ruleType,
+        strategy_type: this.rule_type,
+        language_id: this.activeLanguage,
+        keyword: this.keyword,
+      })
     this.loadingDone()
     if (status !== 201) {
       this.$message({
@@ -839,6 +951,11 @@ export default class HookTable extends VueBase {
       return
     }
     this.total = page.alltotal
+    if (data.length === 0 && this.currentPage > 1) {
+      this.currentPage--
+      await this.getTable()
+      return
+    }
     this.tableData = data
   }
   handleSizeChange(val: number) {
@@ -850,11 +967,24 @@ export default class HookTable extends VueBase {
     this.currentPage = val
     this.getTable()
   }
+  async getEnumData(){
+    const { status, msg, data } = await this.services.setting.getEnum();
+    if (status !== 201) {
+      this.$message({
+        type: 'error',
+        message: msg,
+        showClose: true,
+      })
+      return
+    }
+    this.tagsList = data.tags
+  }
   created() {
     this.hookType.type = this.ruleType
     this.hook.type = this.ruleType
     this.getTable()
     this.getTypes()
+    this.getEnumData()
   }
 }
 </script>
@@ -908,14 +1038,58 @@ export default class HookTable extends VueBase {
     padding-bottom: 6px;
   }
 }
-/deep/.el-table th {
+::v-deep.el-table th {
   background: #f8f9fb;
 }
 .hookTable {
   &.el-table {
-    /deep/th {
+    ::v-deepth {
       background: #f6f8fa;
     }
   }
+}
+.table-btn-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  .el-button {
+    box-sizing: border-box;
+    font-size: 14px;
+  }
+  .l {
+    color: #38435a;
+    line-height: 14px;
+    padding: 4px 4px 8px 4px;
+    display: inline-block;
+  }
+  .el-button + .el-button {
+    margin-left: 0;
+  }
+}
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
+}
+::v-deep.el-select .el-tag.el-tag--info{
+  background-color: #eaf3ff;
+  border-color: #d5e6ff;
+  color: #2d82ff;
+}
+
+::v-deep.el-select .el-tag.el-tag--info .el-tag__close{
+  color: #2d82ff;
+  background-color: #d5e6ff;
 }
 </style>
