@@ -27,7 +27,7 @@ const baseRoutes: Array<RouteConfig> = [
         name: 'taint',
         redirect: '/taint/search',
         meta: {
-          isMenu: true,
+          // isMenu: true,
           keepAlive: true,
           disabled: true,
           i18n: 'menu.taintPool',
@@ -42,17 +42,17 @@ const baseRoutes: Array<RouteConfig> = [
           //   },
           //   component: () => import('@/views/taint/Pool.vue'),
           // },
-          {
-            path: 'search',
-            name: 'search',
-            meta: {
-              keepAlive: true,
-              disabled: true,
-              i18n: 'menu.taintPool',
-              name: i18n.t('menu.taintPool'),
-            },
-            component: () => import('@/views/taint/Search.vue'),
-          },
+          // {
+          //   path: 'search',
+          //   name: 'search',
+          //   meta: {
+          //     keepAlive: true,
+          //     disabled: true,
+          //     i18n: 'menu.taintPool',
+          //     name: i18n.t('menu.taintPool'),
+          //   },
+          //   component: () => import('@/views/taint/Search.vue'),
+          // },
           {
             path: 'poolDetail/:id',
             name: 'poolDetail',
@@ -108,6 +108,7 @@ const routes: Array<RouteConfig> = [
         name: 'projectDetail/:pid',
         meta: {
           disabled: true,
+          keepAlive: true,
           i18n: 'menu.projectDetail',
           name: i18n.t('menu.projectDetail'),
         },
@@ -131,6 +132,7 @@ const routes: Array<RouteConfig> = [
         name: 'vulnList',
         meta: {
           i18n: 'menu.vulnList',
+          keepAlive: true,
           name: i18n.t('menu.vulnList'),
         },
         component: () => import('@/views/vuln/VulnList.vue'),
@@ -143,6 +145,26 @@ const routes: Array<RouteConfig> = [
           name: i18n.t('menu.vulnDetail'),
         },
         component: () => import('@/views/vuln/VulnDetail.vue'),
+      },
+      {
+        path: 'scaDetail/:page/:id',
+        name: 'scaDetail/:page/:id',
+        meta: {
+          disabled: true,
+          i18n: 'menu.scaDetail',
+          name: i18n.t('menu.scaDetail'),
+        },
+        component: () => import('@/views/sca/ScaDetail.vue'),
+      },
+      {
+        path: 'scanDetail/:page/:id',
+        name: 'scanDetail/:page/:id',
+        meta: {
+          disabled: true,
+          i18n: 'menu.scanDetail',
+          name: i18n.t('menu.scaDetail'),
+        },
+        component: () => import('@/views/sca/ScanDetail.vue'),
       },
     ],
   },
@@ -169,14 +191,13 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/views/sca/ScaList.vue'),
       },
       {
-        path: 'scaDetail/:page/:id',
-        name: 'scaDetail/:page/:id',
+        path: 'scalistDetail/:page/:id',
+        name: 'scalistDetail/:page/:id',
         meta: {
-          disabled: true,
-          i18n: 'menu.scaDetail',
-          name: i18n.t('menu.scaDetail'),
+          i18n: 'menu.scalistDetail',
+          name: i18n.t('menu.vulnDetail'),
         },
-        component: () => import('@/views/sca/ScaDetail.vue'),
+        component: () => import('@/views/sca/ScaDialog.vue'),
       },
     ],
   },
@@ -185,7 +206,7 @@ const routes: Array<RouteConfig> = [
     name: 'taint',
     redirect: '/taint/search',
     meta: {
-      isMenu: true,
+      // isMenu: true,
       keepAlive: true,
       disabled: true,
       i18n: 'menu.taintPool',
@@ -200,17 +221,17 @@ const routes: Array<RouteConfig> = [
       //   },
       //   component: () => import('@/views/taint/Pool.vue'),
       // },
-      {
-        path: 'search',
-        name: 'search',
-        meta: {
-          keepAlive: true,
-          disabled: true,
-          i18n: 'menu.taintPool',
-          name: i18n.t('menu.taintPool'),
-        },
-        component: () => import('@/views/taint/Search.vue'),
-      },
+      // {
+      //   path: 'search',
+      //   name: 'search',
+      //   meta: {
+      //     keepAlive: true,
+      //     disabled: true,
+      //     i18n: 'menu.taintPool',
+      //     name: i18n.t('menu.taintPool'),
+      //   },
+      //   component: () => import('@/views/taint/Search.vue'),
+      // },
       {
         path: 'poolDetail/:id',
         name: 'poolDetail',
@@ -225,26 +246,56 @@ const routes: Array<RouteConfig> = [
     ],
   },
   {
-    path: '/setting',
-    name: 'setting',
-    redirect: '/setting/agentManage',
+    path: 'agentManage',
+    name: 'agentManage',
     meta: {
       isMenu: true,
+      i18n: 'menu.agentManage',
+      name: i18n.t('menu.agentManage'),
+    },
+    component: () => import('@/views/setting/AgentManage.vue'),
+  },
+  {
+    path: 'sysInfo',
+    name: 'sysInfo',
+    meta: {
+      keepAlive: true,
+      i18n: 'menu.sysInfo',
+      name: i18n.t('menu.sysInfo'),
+    },
+    component: () => import('@/views/setting/SysInfo.vue'),
+  },
+  {
+    path: 'agentConfig',
+    name: 'agentConfig',
+    meta: {
+      disabled: true,
+      i18n: 'menu.agentConfig',
+      name: i18n.t('menu.agentConfig'),
+    },
+    component: () => import('@/views/setting/agentConfig.vue'),
+  },
+  {
+    path: '/setting',
+    name: 'setting',
+    redirect: '/setting/strategyManage',
+    meta: {
       i18n: 'menu.setting',
       name: i18n.t('menu.setting'),
     },
     component: () => import('@/views/setting/Index.vue'),
     children: [
       {
-        path: 'agentManage',
-        name: 'agentManage',
+        path: 'webhook',
+        name: 'webhook',
         meta: {
           disabled: true,
-          i18n: 'menu.agentManage',
-          name: i18n.t('menu.agentManage'),
+          i18n: 'menu.webhook',
+          name: i18n.t('menu.webhook'),
         },
-        component: () => import('@/views/setting/AgentManage.vue'),
+        component: () => import('@/views/setting/webhook.vue'),
       },
+
       {
         path: 'strategyManage',
         name: 'strategyManage',
@@ -255,6 +306,65 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/views/setting/StrategyManage.vue'),
       },
       {
+        path: 'strategy',
+        name: 'strategy',
+        meta: {
+          i18n: 'menu.strategy',
+          name: i18n.t('menu.strategy'),
+        },
+        component: () => import('@/views/setting/Strategy.vue'),
+      },
+      {
+        path: 'templateManage',
+        name: 'templateManage',
+        meta: {
+          disabled: true,
+          i18n: 'menu.templateManage',
+          name: i18n.t('menu.templateManage'),
+        },
+        component: () => import('@/views/setting/templateManage.vue'),
+      },
+      {
+        path: 'sensitiveManage',
+        name: 'sensitiveManage',
+        meta: {
+          disabled: true,
+          i18n: 'menu.sensitiveManage',
+          name: i18n.t('menu.sensitiveManage'),
+        },
+        component: () => import('@/views/setting/sensitiveManage.vue'),
+      },
+      {
+        path: 'sensitive',
+        name: 'sensitive',
+        meta: {
+          disabled: true,
+          i18n: 'menu.sensitive',
+          name: i18n.t('menu.sensitive'),
+        },
+        component: () => import('@/views/setting/sensitive.vue'),
+      },
+      {
+        path: 'template',
+        name: 'template',
+        meta: {
+          disabled: true,
+          i18n: 'menu.template',
+          name: i18n.t('menu.template'),
+        },
+        component: () => import('@/views/setting/template.vue'),
+      },
+      // {
+      //   path: 'scaManage',
+      //   name: 'scaManage',
+      //   meta: {
+      //     disabled: true,
+      //     i18n: 'menu.scaManage',
+      //     name: i18n.t('menu.scaManage'),
+      //   },
+      //   component: () => import('@/views/setting/scaManage.vue'),
+      // },
+      {
         path: 'hookRule',
         name: 'hookRule',
         meta: {
@@ -263,52 +373,6 @@ const routes: Array<RouteConfig> = [
           name: i18n.t('menu.hookRule'),
         },
         component: () => import('@/views/setting/hookRule.vue'),
-      },
-      // {
-      //   path: 'upgradeOnline',
-      //   name: 'upgradeOnline',
-      //   meta: {
-      //     name: i18n.t('menu.upgradeOnline'),
-      //   },
-      //   component: () => import('@/views/setting/UpgradeOnline.vue'),
-      // },
-      // {
-      //   path: 'sysInfo',
-      //   name: 'sysInfo',
-      //   meta: {
-      //     name: i18n.t('menu.sysInfo'),
-      //   },
-      //   component: () => import('@/views/setting/SysInfo.vue'),
-      // },
-      {
-        path: 'changePassword',
-        name: 'changePassword',
-        meta: {
-          disabled: true,
-          i18n: 'menu.changePassword',
-          name: i18n.t('menu.changePassword'),
-        },
-        component: () => import('@/views/setting/ChangePassword.vue'),
-      },
-      {
-        path: 'logManage',
-        name: 'logManage',
-        meta: {
-          disabled: true,
-          i18n: 'menu.logManage',
-          name: i18n.t('menu.logManage'),
-        },
-        component: () => import('@/views/setting/LogManage.vue'),
-      },
-      {
-        path: 'serverRegister',
-        name: 'serverRegister',
-        meta: {
-          disabled: true,
-          i18n: 'menu.serverRegister',
-          name: i18n.t('menu.serverRegister'),
-        },
-        component: () => import('@/views/setting/serverRegister.vue'),
       },
       {
         path: 'StatusMonitoring',
@@ -320,52 +384,60 @@ const routes: Array<RouteConfig> = [
         },
         component: () => import('@/views/setting/StatusMonitoring.vue'),
       },
-    ],
-  },
-  {
-    path: '/department',
-    name: 'department',
-    redirect: '/department/departmentList',
-    meta: {
-      isMenu: true,
-      i18n: 'menu.department',
-      name: i18n.t('menu.department'),
-    },
-    component: () => import('@/views/department/Index.vue'),
-    children: [
       {
-        path: 'departmentList',
-        name: 'departmentList',
+        path: 'changeLogo',
+        name: 'changeLogo',
         meta: {
-          i18n: 'menu.department',
-          name: i18n.t('menu.department'),
+          disabled: true,
+          i18n: 'menu.changeLogo',
+          name: i18n.t('menu.changeLogo'),
         },
-        component: () => import('@/views/department/DepartmentList.vue'),
+        component: () => import('@/views/setting/changeLogo.vue'),
+      },
+      // {
+      //   path: 'upgradeOnline',
+      //   name: 'upgradeOnline',
+      //   meta: {
+      //     name: i18n.t('menu.upgradeOnline'),
+      //   },
+      //   component: () => import('@/views/setting/UpgradeOnline.vue'),
+      // },
+
+      {
+        path: 'changePassword',
+        name: 'changePassword',
+        meta: {
+          disabled: true,
+          i18n: 'menu.changePassword',
+          name: i18n.t('menu.changePassword'),
+        },
+        component: () => import('@/views/setting/ChangePassword.vue'),
+      },
+
+      {
+        path: 'logManage',
+        name: 'logManage',
+        meta: {
+          disabled: true,
+          i18n: 'menu.logManage',
+          name: i18n.t('menu.logManage'),
+        },
+        component: () => import('@/views/setting/LogManage.vue'),
+      },
+
+      {
+        path: 'about',
+        name: 'about',
+        meta: {
+          disabled: true,
+          i18n: 'menu.about',
+          name: i18n.t('menu.about'),
+        },
+        component: () => import('@/views/setting/about.vue'),
       },
     ],
   },
-  {
-    path: '/talent',
-    name: 'talent',
-    redirect: '/talent/talentList',
-    meta: {
-      isMenu: true,
-      i18n: 'menu.talent',
-      name: i18n.t('menu.talent'),
-    },
-    component: () => import('@/views/talent/Index.vue'),
-    children: [
-      {
-        path: 'talentList',
-        name: 'talentList',
-        meta: {
-          i18n: 'menu.talent',
-          name: i18n.t('menu.talent'),
-        },
-        component: () => import('@/views/talent/TalentList.vue'),
-      },
-    ],
-  },
+
   {
     path: '/deploy',
     name: '/deploy',
@@ -416,6 +488,7 @@ const adminRoutes: Array<RouteConfig> = [
         name: 'projectDetail/:pid',
         meta: {
           disabled: true,
+          keepAlive: true,
           i18n: 'menu.projectDetail',
           name: i18n.t('menu.projectDetail'),
         },
@@ -439,6 +512,7 @@ const adminRoutes: Array<RouteConfig> = [
         name: 'vulnList',
         meta: {
           i18n: 'menu.vulnList',
+          keepAlive: true,
           name: i18n.t('menu.vulnList'),
         },
         component: () => import('@/views/vuln/VulnList.vue'),
@@ -451,6 +525,26 @@ const adminRoutes: Array<RouteConfig> = [
           name: i18n.t('menu.vulnDetail'),
         },
         component: () => import('@/views/vuln/VulnDetail.vue'),
+      },
+      {
+        path: 'scaDetail/:page/:id',
+        name: 'scaDetail/:page/:id',
+        meta: {
+          disabled: true,
+          i18n: 'menu.scaDetail',
+          name: i18n.t('menu.scaDetail'),
+        },
+        component: () => import('@/views/sca/ScaDetail.vue'),
+      },
+      {
+        path: 'scanDetail/:page/:id',
+        name: 'scanDetail/:page/:id',
+        meta: {
+          disabled: true,
+          i18n: 'menu.scanDetail',
+          name: i18n.t('menu.scaDetail'),
+        },
+        component: () => import('@/views/sca/ScanDetail.vue'),
       },
     ],
   },
@@ -477,14 +571,13 @@ const adminRoutes: Array<RouteConfig> = [
         component: () => import('@/views/sca/ScaList.vue'),
       },
       {
-        path: 'scaDetail/:page/:id',
-        name: 'scaDetail/:page/:id',
+        path: 'scalistDetail/:page/:id',
+        name: 'scalistDetail/:page/:id',
         meta: {
-          disabled: true,
-          i18n: 'menu.scaDetail',
-          name: i18n.t('menu.scaDetail'),
+          i18n: 'menu.scalistDetail',
+          name: i18n.t('menu.vulnDetail'),
         },
-        component: () => import('@/views/sca/ScaDetail.vue'),
+        component: () => import('@/views/sca/ScaDialog.vue'),
       },
     ],
   },
@@ -493,7 +586,7 @@ const adminRoutes: Array<RouteConfig> = [
     name: 'taint',
     redirect: '/taint/search',
     meta: {
-      isMenu: true,
+      // isMenu: true,
       keepAlive: true,
       disabled: true,
       i18n: 'menu.taintPool',
@@ -508,17 +601,17 @@ const adminRoutes: Array<RouteConfig> = [
       //   },
       //   component: () => import('@/views/taint/Pool.vue'),
       // },
-      {
-        path: 'search',
-        name: 'search',
-        meta: {
-          keepAlive: true,
-          disabled: true,
-          i18n: 'menu.taintPool',
-          name: i18n.t('menu.taintPool'),
-        },
-        component: () => import('@/views/taint/Search.vue'),
-      },
+      // {
+      //   path: 'search',
+      //   name: 'search',
+      //   meta: {
+      //     keepAlive: true,
+      //     disabled: true,
+      //     i18n: 'menu.taintPool',
+      //     name: i18n.t('menu.taintPool'),
+      //   },
+      //   component: () => import('@/views/taint/Search.vue'),
+      // },
       {
         path: 'poolDetail/:id',
         name: 'poolDetail',
@@ -533,26 +626,79 @@ const adminRoutes: Array<RouteConfig> = [
     ],
   },
   {
-    path: '/setting',
-    name: 'setting',
-    redirect: '/setting/agentManage',
+    path: 'agentManage',
+    name: 'agentManage',
     meta: {
       isMenu: true,
+      i18n: 'menu.agentManage',
+      name: i18n.t('menu.agentManage'),
+    },
+    component: () => import('@/views/setting/AgentManage.vue'),
+  },
+  {
+    path: 'sysInfo',
+    name: 'sysInfo',
+    meta: {
+      keepAlive: true,
+      i18n: 'menu.sysInfo',
+      name: i18n.t('menu.sysInfo'),
+    },
+    component: () => import('@/views/setting/SysInfo.vue'),
+  },
+  {
+    path: 'agentConfig',
+    name: 'agentConfig',
+    meta: {
+      disabled: true,
+      i18n: 'menu.agentConfig',
+      name: i18n.t('menu.agentConfig'),
+    },
+    component: () => import('@/views/setting/agentConfig.vue'),
+  },
+  {
+    path: '/setting',
+    name: 'setting',
+    redirect: '/setting/strategyManage',
+    meta: {
       i18n: 'menu.setting',
       name: i18n.t('menu.setting'),
     },
     component: () => import('@/views/setting/Index.vue'),
     children: [
+      // {
+      //   path: 'agentRank',
+      //   name: 'agentRank',
+      //   meta: {
+      //     disabled: true,
+      //     i18n: 'menu.agentRank',
+      //     name: i18n.t('menu.agentRank'),
+      //   },
+      //   component: () => import('@/views/setting/agentRank.vue'),
+      // },
       {
-        path: 'agentManage',
-        name: 'agentManage',
+        path: 'webhook',
+        name: 'webhook',
         meta: {
           disabled: true,
-          i18n: 'menu.agentManage',
-          name: i18n.t('menu.agentManage'),
+          i18n: 'menu.webhook',
+          name: i18n.t('menu.webhook'),
         },
-        component: () => import('@/views/setting/AgentManage.vue'),
+        component: () => import('@/views/setting/webhook.vue'),
       },
+      {
+        path: 'projectTemplate',
+        name: 'projectTemplate',
+        component: () => import('@/views/setting/projectTemplate.vue'),
+        meta: {
+          disabled: true,
+          i18n: 'menu.projectTemplate',
+          isMenu: false,
+          keepAlive: false,
+          name: 'menu.projectTemplate',
+        },
+        redirect: '',
+      },
+
       {
         path: 'strategyManage',
         name: 'strategyManage',
@@ -563,6 +709,66 @@ const adminRoutes: Array<RouteConfig> = [
         component: () => import('@/views/setting/StrategyManage.vue'),
       },
       {
+        path: 'strategy',
+        name: 'strategy',
+        meta: {
+          i18n: 'menu.strategy',
+          name: i18n.t('menu.strategy'),
+        },
+        component: () => import('@/views/setting/Strategy.vue'),
+      },
+      {
+        path: 'templateManage',
+        name: 'templateManage',
+        meta: {
+          disabled: true,
+          i18n: 'menu.templateManage',
+          name: i18n.t('menu.templateManage'),
+        },
+        component: () => import('@/views/setting/templateManage.vue'),
+      },
+      {
+        path: 'sensitiveManage',
+        name: 'sensitiveManage',
+        meta: {
+          disabled: true,
+          i18n: 'menu.sensitiveManage',
+          name: i18n.t('menu.sensitiveManage'),
+        },
+        component: () => import('@/views/setting/sensitiveManage.vue'),
+      },
+      {
+        path: 'sensitive',
+        name: 'sensitive',
+        meta: {
+          disabled: true,
+          i18n: 'menu.sensitive',
+          name: i18n.t('menu.sensitive'),
+        },
+        component: () => import('@/views/setting/sensitive.vue'),
+      },
+
+      {
+        path: 'template',
+        name: 'template',
+        meta: {
+          disabled: true,
+          i18n: 'menu.template',
+          name: i18n.t('menu.template'),
+        },
+        component: () => import('@/views/setting/template.vue'),
+      },
+      // {
+      //   path: 'scaManage',
+      //   name: 'scaManage',
+      //   meta: {
+      //     disabled: true,
+      //     i18n: 'menu.scaManage',
+      //     name: i18n.t('menu.scaManage'),
+      //   },
+      //   component: () => import('@/views/setting/scaManage.vue'),
+      // },
+      {
         path: 'hookRule',
         name: 'hookRule',
         meta: {
@@ -571,52 +777,6 @@ const adminRoutes: Array<RouteConfig> = [
           name: i18n.t('menu.hookRule'),
         },
         component: () => import('@/views/setting/hookRule.vue'),
-      },
-      // {
-      //   path: 'upgradeOnline',
-      //   name: 'upgradeOnline',
-      //   meta: {
-      //     name: i18n.t('menu.upgradeOnline'),
-      //   },
-      //   component: () => import('@/views/setting/UpgradeOnline.vue'),
-      // },
-      // {
-      //   path: 'sysInfo',
-      //   name: 'sysInfo',
-      //   meta: {
-      //     name: i18n.t('menu.sysInfo'),
-      //   },
-      //   component: () => import('@/views/setting/SysInfo.vue'),
-      // },
-      {
-        path: 'changePassword',
-        name: 'changePassword',
-        meta: {
-          disabled: true,
-          i18n: 'menu.changePassword',
-          name: i18n.t('menu.changePassword'),
-        },
-        component: () => import('@/views/setting/ChangePassword.vue'),
-      },
-      {
-        path: 'logManage',
-        name: 'logManage',
-        meta: {
-          disabled: true,
-          i18n: 'menu.logManage',
-          name: i18n.t('menu.logManage'),
-        },
-        component: () => import('@/views/setting/LogManage.vue'),
-      },
-      {
-        path: 'serverRegister',
-        name: 'serverRegister',
-        meta: {
-          disabled: true,
-          i18n: 'menu.serverRegister',
-          name: i18n.t('menu.serverRegister'),
-        },
-        component: () => import('@/views/setting/serverRegister.vue'),
       },
       {
         path: 'StatusMonitoring',
@@ -628,27 +788,66 @@ const adminRoutes: Array<RouteConfig> = [
         },
         component: () => import('@/views/setting/StatusMonitoring.vue'),
       },
-    ],
-  },
-  {
-    path: '/department',
-    name: 'department',
-    redirect: '/department/departmentList',
-    meta: {
-      isMenu: true,
-      i18n: 'menu.department',
-      name: i18n.t('menu.department'),
-    },
-    component: () => import('@/views/department/Index.vue'),
-    children: [
       {
-        path: 'departmentList',
-        name: 'departmentList',
+        path: 'SystemSettings',
+        name: 'SystemSettings',
         meta: {
-          i18n: 'menu.department',
-          name: i18n.t('menu.department'),
+          disabled: true,
+          i18n: 'menu.systemSettings',
+          name: i18n.t('menu.systemSettings'),
         },
-        component: () => import('@/views/department/DepartmentList.vue'),
+        component: () => import('@/views/setting/SystemSettings.vue'),
+      },
+      {
+        path: 'changeLogo',
+        name: 'changeLogo',
+        meta: {
+          disabled: true,
+          i18n: 'menu.changeLogo',
+          name: i18n.t('menu.changeLogo'),
+        },
+        component: () => import('@/views/setting/changeLogo.vue'),
+      },
+      // {
+      //   path: 'upgradeOnline',
+      //   name: 'upgradeOnline',
+      //   meta: {
+      //     name: i18n.t('menu.upgradeOnline'),
+      //   },
+      //   component: () => import('@/views/setting/UpgradeOnline.vue'),
+      // },
+
+      {
+        path: 'changePassword',
+        name: 'changePassword',
+        meta: {
+          disabled: true,
+          i18n: 'menu.changePassword',
+          name: i18n.t('menu.changePassword'),
+        },
+        component: () => import('@/views/setting/ChangePassword.vue'),
+      },
+
+      {
+        path: 'logManage',
+        name: 'logManage',
+        meta: {
+          disabled: true,
+          i18n: 'menu.logManage',
+          name: i18n.t('menu.logManage'),
+        },
+        component: () => import('@/views/setting/LogManage.vue'),
+      },
+
+      {
+        path: 'about',
+        name: 'about',
+        meta: {
+          disabled: true,
+          i18n: 'menu.about',
+          name: i18n.t('menu.about'),
+        },
+        component: () => import('@/views/setting/about.vue'),
       },
     ],
   },
@@ -702,6 +901,7 @@ const userRoutes: Array<RouteConfig> = [
         name: 'projectDetail/:pid',
         meta: {
           disabled: true,
+          keepAlive: true,
           i18n: 'menu.projectDetail',
           name: i18n.t('menu.projectDetail'),
         },
@@ -725,6 +925,7 @@ const userRoutes: Array<RouteConfig> = [
         name: 'vulnList',
         meta: {
           i18n: 'menu.vulnList',
+          keepAlive: true,
           name: i18n.t('menu.vulnList'),
         },
         component: () => import('@/views/vuln/VulnList.vue'),
@@ -737,6 +938,26 @@ const userRoutes: Array<RouteConfig> = [
           name: i18n.t('menu.vulnDetail'),
         },
         component: () => import('@/views/vuln/VulnDetail.vue'),
+      },
+      {
+        path: 'scaDetail/:page/:id',
+        name: 'scaDetail/:page/:id',
+        meta: {
+          disabled: true,
+          i18n: 'menu.scaDetail',
+          name: i18n.t('menu.scaDetail'),
+        },
+        component: () => import('@/views/sca/ScaDetail.vue'),
+      },
+      {
+        path: 'scanDetail/:page/:id',
+        name: 'scanDetail/:page/:id',
+        meta: {
+          disabled: true,
+          i18n: 'menu.scanDetail',
+          name: i18n.t('menu.scaDetail'),
+        },
+        component: () => import('@/views/sca/ScanDetail.vue'),
       },
     ],
   },
@@ -763,14 +984,13 @@ const userRoutes: Array<RouteConfig> = [
         component: () => import('@/views/sca/ScaList.vue'),
       },
       {
-        path: 'scaDetail/:page/:id',
-        name: 'scaDetail/:page/:id',
+        path: 'scalistDetail/:page/:id',
+        name: 'scalistDetail/:page/:id',
         meta: {
-          disabled: true,
-          i18n: 'menu.scaDetail',
-          name: i18n.t('menu.scaDetail'),
+          i18n: 'menu.scalistDetail',
+          name: i18n.t('menu.scalistDetail'),
         },
-        component: () => import('@/views/sca/ScaDetail.vue'),
+        component: () => import('@/views/sca/ScaDialog.vue'),
       },
     ],
   },
@@ -779,7 +999,7 @@ const userRoutes: Array<RouteConfig> = [
     name: 'taint',
     redirect: '/taint/search',
     meta: {
-      isMenu: true,
+      // isMenu: true,
       keepAlive: true,
       disabled: true,
       i18n: 'menu.taintPool',
@@ -787,17 +1007,17 @@ const userRoutes: Array<RouteConfig> = [
     },
     component: () => import('@/views/taint/Index.vue'),
     children: [
-      {
-        path: 'search',
-        name: 'search',
-        meta: {
-          keepAlive: true,
-          disabled: true,
-          i18n: 'menu.taintPool',
-          name: i18n.t('menu.taintPool'),
-        },
-        component: () => import('@/views/taint/Search.vue'),
-      },
+      // {
+      //   path: 'search',
+      //   name: 'search',
+      //   meta: {
+      //     keepAlive: true,
+      //     disabled: true,
+      //     i18n: 'menu.taintPool',
+      //     name: i18n.t('menu.taintPool'),
+      //   },
+      //   component: () => import('@/views/taint/Search.vue'),
+      // },
       {
         path: 'poolDetail/:id',
         name: 'poolDetail',
@@ -812,26 +1032,35 @@ const userRoutes: Array<RouteConfig> = [
     ],
   },
   {
-    path: '/setting',
-    name: 'setting',
-    redirect: '/setting/agentManage',
+    path: 'agentManage',
+    name: 'agentManage',
     meta: {
       isMenu: true,
+      i18n: 'menu.agentManage',
+      name: i18n.t('menu.agentManage'),
+    },
+    component: () => import('@/views/setting/AgentManage.vue'),
+  },
+  {
+    path: 'sysInfo',
+    name: 'sysInfo',
+    meta: {
+      keepAlive: true,
+      i18n: 'menu.sysInfo',
+      name: i18n.t('menu.sysInfo'),
+    },
+    component: () => import('@/views/setting/SysInfo.vue'),
+  },
+  {
+    path: '/setting',
+    name: 'setting',
+    redirect: '/setting/strategyManage',
+    meta: {
       i18n: 'menu.setting',
       name: i18n.t('menu.setting'),
     },
     component: () => import('@/views/setting/Index.vue'),
     children: [
-      {
-        path: 'agentManage',
-        name: 'agentManage',
-        meta: {
-          disabled: true,
-          i18n: 'menu.agentManage',
-          name: i18n.t('menu.agentManage'),
-        },
-        component: () => import('@/views/setting/AgentManage.vue'),
-      },
       {
         path: 'strategyManage',
         name: 'strategyManage',
@@ -842,6 +1071,66 @@ const userRoutes: Array<RouteConfig> = [
         component: () => import('@/views/setting/StrategyManage.vue'),
       },
       {
+        path: 'strategy',
+        name: 'strategy',
+        meta: {
+          i18n: 'menu.strategy',
+          name: i18n.t('menu.strategy'),
+        },
+        component: () => import('@/views/setting/Strategy.vue'),
+      },
+      {
+        path: 'templateManage',
+        name: 'templateManage',
+        meta: {
+          disabled: true,
+          i18n: 'menu.templateManage',
+          name: i18n.t('menu.templateManage'),
+        },
+        component: () => import('@/views/setting/templateManage.vue'),
+      },
+      {
+        path: 'sensitiveManage',
+        name: 'sensitiveManage',
+        meta: {
+          disabled: true,
+          i18n: 'menu.sensitiveManage',
+          name: i18n.t('menu.sensitiveManage'),
+        },
+        component: () => import('@/views/setting/sensitiveManage.vue'),
+      },
+      {
+        path: 'sensitive',
+        name: 'sensitive',
+        meta: {
+          disabled: true,
+          i18n: 'menu.sensitive',
+          name: i18n.t('menu.sensitive'),
+        },
+        component: () => import('@/views/setting/sensitive.vue'),
+      },
+
+      {
+        path: 'template',
+        name: 'template',
+        meta: {
+          disabled: true,
+          i18n: 'menu.template',
+          name: i18n.t('menu.template'),
+        },
+        component: () => import('@/views/setting/template.vue'),
+      },
+      // {
+      //   path: 'scaManage',
+      //   name: 'scaManage',
+      //   meta: {
+      //     disabled: true,
+      //     i18n: 'menu.scaManage',
+      //     name: i18n.t('menu.scaManage'),
+      //   },
+      //   component: () => import('@/views/setting/scaManage.vue'),
+      // },
+      {
         path: 'hookRule',
         name: 'hookRule',
         meta: {
@@ -851,6 +1140,26 @@ const userRoutes: Array<RouteConfig> = [
         },
         component: () => import('@/views/setting/hookRule.vue'),
       },
+      {
+        path: 'StatusMonitoring',
+        name: 'StatusMonitoring',
+        meta: {
+          disabled: true,
+          i18n: 'menu.statusMonitoring',
+          name: i18n.t('menu.statusMonitoring'),
+        },
+        component: () => import('@/views/setting/StatusMonitoring.vue'),
+      },
+      // {
+      //   path: 'changeLogo',
+      //   name: 'changeLogo',
+      //   meta: {
+      //     disabled: true,
+      //     i18n: 'menu.changeLogo',
+      //     name: i18n.t('menu.changeLogo'),
+      //   },
+      //   component: () => import('@/views/setting/changeLogo.vue'),
+      // },
       // {
       //   path: 'upgradeOnline',
       //   name: 'upgradeOnline',
@@ -859,14 +1168,7 @@ const userRoutes: Array<RouteConfig> = [
       //   },
       //   component: () => import('@/views/setting/UpgradeOnline.vue'),
       // },
-      // {
-      //   path: 'sysInfo',
-      //   name: 'sysInfo',
-      //   meta: {
-      //     name: i18n.t('menu.sysInfo'),
-      //   },
-      //   component: () => import('@/views/setting/SysInfo.vue'),
-      // },
+
       {
         path: 'changePassword',
         name: 'changePassword',
@@ -877,6 +1179,7 @@ const userRoutes: Array<RouteConfig> = [
         },
         component: () => import('@/views/setting/ChangePassword.vue'),
       },
+
       {
         path: 'logManage',
         name: 'logManage',
@@ -888,14 +1191,14 @@ const userRoutes: Array<RouteConfig> = [
         component: () => import('@/views/setting/LogManage.vue'),
       },
       {
-        path: 'StatusMonitoring',
-        name: 'StatusMonitoring',
+        path: 'about',
+        name: 'about',
         meta: {
           disabled: true,
-          i18n: 'menu.statusMonitoring',
-          name: i18n.t('menu.statusMonitoring'),
+          i18n: 'menu.about',
+          name: i18n.t('menu.about'),
         },
-        component: () => import('@/views/setting/StatusMonitoring.vue'),
+        component: () => import('@/views/setting/about.vue'),
       },
     ],
   },

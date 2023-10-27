@@ -1,7 +1,7 @@
 <template>
   <main class="container">
     <div class="search-box" :class="active ? 'top' : ''">
-      <SearchBar @enter="search" />
+      <SearchBar ref="SearchBar" @enter="search" />
     </div>
     <transition name="fade">
       <div v-if="!active" class="desc">
@@ -11,17 +11,11 @@
             <div class="label" :class="$i18n.locale">
               {{ $t('views.search.url') }}
             </div>
-            <div class="info">(.*)/druid/.*</div>
+            <div class="info">/druid/</div>
           </div>
           <div class="example">
             <div class="label" :class="$i18n.locale">
               {{ $t('views.search.req_data') }}
-            </div>
-            <div class="info">(.*)whoami(.*)</div>
-          </div>
-          <div class="example">
-            <div class="label" :class="$i18n.locale">
-              {{ $t('views.search.signature') }}
             </div>
             <div class="info">whoami</div>
           </div>
@@ -35,19 +29,13 @@
             <div class="label" :class="$i18n.locale">
               {{ $t('views.search.req_header_fs') }}
             </div>
-            <div class="info">(.*)exec</div>
+            <div class="info">exec</div>
           </div>
           <div class="example">
             <div class="label" :class="$i18n.locale">
               {{ $t('views.search.req_data') }}
             </div>
             <div class="info">&lt;script&gt; alert(1) &lt;/script&gt;</div>
-          </div>
-          <div class="example">
-            <div class="label" :class="$i18n.locale">
-              {{ $t('views.search.sinkvalues') }}
-            </div>
-            <div class="info">(.*)rememberMe(.*)</div>
           </div>
         </div>
       </div>
@@ -94,14 +82,14 @@ export default class Index extends VueBase {
   private type = ''
   private value = ''
   private tableList: Array<any> = []
-  private afterkeys = ''
+  private afterkeys = {}
   private loadingFlag = false
   private search([type, value]: any[]) {
     this.type = type
     this.value = value
     this.page = 1
     this.tableList = []
-    this.afterkeys = ''
+    this.afterkeys = {}
     if (!value) {
       this.$message.warning(this.$t('views.search.warning') as string)
     }
@@ -137,19 +125,34 @@ export default class Index extends VueBase {
     const exclude_ids = this.tableList.map((item) => {
       return item.method_pools.id
     })
+    const SearchBar: any = this.$refs.SearchBar
+
+    let afterObj: any = undefined
+    for (let key in this.afterkeys) {
+      if (!afterObj) {
+        afterObj = {}
+      }
+      afterObj['search_after_' + key] = this.afterkeys[key]
+    }
+
     const res: any = await this.services.taint.search({
       ...searchKey,
+      search_mode: SearchBar.search_mode,
+      time_range: [
+        ~~(SearchBar.time_range[0].getTime() / 1000),
+        ~~(SearchBar.time_range[1].getTime() / 1000),
+      ],
       page_index: this.page,
       page_size: 10,
-      search_after_update_time: this.afterkeys || undefined,
-      exclude_ids: String(exclude_ids),
+      ...afterObj,
+      exclude_ids: exclude_ids,
     })
     this.loadingFlag = false
     if (res.status !== 201) {
       this.$message.error(res.msg)
       return
     }
-    const tableList = res.data.method_pools.map((item: any, index: number) => {
+    const tableList = res.data.method_pools.map((item: any) => {
       const vulnerablities_count_map = {}
       const relations_map = {}
       res.data.aggregation.vulnerablities_count.forEach((i: any) => {
@@ -165,7 +168,7 @@ export default class Index extends VueBase {
         relations: relations_map[item.id],
       }
     })
-    this.afterkeys = res.data.afterkeys.update_time
+    this.afterkeys = res.data.afterkeys
     this.tableList = this.tableList.concat(tableList)
     this.dataEnd = false
     if (tableList.length < 10) {
@@ -225,7 +228,7 @@ main.container {
     display: flex;
     justify-content: center;
     .search-bar {
-      width: 908px;
+      width: 948px;
     }
   }
   .top {
@@ -293,5 +296,12 @@ main.container {
 <style>
 html {
   overflow-y: overlay;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
 }
 </style>

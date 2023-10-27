@@ -1,5 +1,7 @@
 import request from '@/utils/request'
 import { iResponse } from '@/services/types'
+import { Message } from 'element-ui'
+import { i18n } from '@/config/lang'
 
 interface AgentDeploySubmitParams {
   agent_value?: string
@@ -19,6 +21,10 @@ export default () =>
           responseType: 'blob',
         })
         .then((res: any) => {
+          if (Object.prototype.toString.call(res) !== '[object Blob]') {
+            Message.error(i18n.t('base.downloadError') as string)
+            return
+          }
           const blob = new Blob([res], {
             type: 'application/octet-stream',
           })
@@ -27,8 +33,12 @@ export default () =>
           link.href = window.URL.createObjectURL(blob)
           if (language === 'java') {
             link.download = 'agent.jar'
-          } else {
+          } else if (language === 'php') {
+            link.download = 'php-agent.tar.gz'
+          } else if (language === 'python') {
             link.download = 'dongtai-agent-python.tar.gz'
+          } else {
+            link.download = 'dongtai-go-agent-config.yaml'
           }
           link.click()
         })
@@ -41,9 +51,6 @@ export default () =>
       return request.get('/agent/deploy/submit')
     }
 
-    getOpenApiUrl(): Promise<iResponse> {
-      return request.get('/openapi')
-    }
     getToken(): Promise<iResponse> {
       return request.get('/user/token')
     }
@@ -52,5 +59,9 @@ export default () =>
     }
     getMD(params: any): Promise<iResponse> {
       return request.get('/agent/deploy', { params })
+    }
+    // // 部门token
+    getDepartment(params: any): Promise<iResponse> {
+      return request.get('/user/department/token')
     }
   })()

@@ -7,13 +7,13 @@
         <div class="title">
           <img
             v-if="this.$i18n.locale == 'zh_cn'"
-            src="../assets/img/logo.png"
+            :src="logo"
             alt="logo"
             style="width: 140px"
           />
           <img
             v-if="this.$i18n.locale == 'en'"
-            src="../assets/img/logo_en.png"
+            :src="logo_en"
             alt="logo"
             style="width: 140px"
           />
@@ -76,6 +76,7 @@
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
 import VueBase from '@/VueBase'
+import emitter from './taint/Emitter'
 
 @Component({ name: 'Login' })
 export default class Login extends VueBase {
@@ -85,7 +86,14 @@ export default class Login extends VueBase {
   private captcha_hash_key = ''
   private captcha_url = ''
   private login_lock = false
+  private logo = '/upload/assets/img/logo.png?v=' + String(Math.random())
+  private logo_en = '/upload/assets/img/logo_en.png?v=' + String(Math.random())
+  changelogo() {
+    this.logo_en = '/upload/assets/img/logo_en.png?v=' + String(Math.random())
+    this.logo = '/upload/assets/img/logo.png?v=' + String(Math.random())
+  }
   created() {
+    emitter.on('changelogo', this.changelogo)
     this.initCaptcha()
   }
 
@@ -101,6 +109,7 @@ export default class Login extends VueBase {
     }
     this.captcha_url = data['image_url']
     this.captcha_hash_key = data['hash_key']
+    this.captcha = ''
   }
 
   private async login() {
@@ -115,12 +124,26 @@ export default class Login extends VueBase {
       captcha_hash_key: this.captcha_hash_key,
     }
     this.loadingStart()
-    const { status, msg } = await this.services.user.login(params)
-    let lang = (navigator as any).language || (navigator as any).userLanguage
-    lang = lang.substr(0, 2)
-    await this.services.setting.setLang(lang)
+    const { status, data, msg } = await this.services.user.login(params)
     this.loadingDone()
     if (status === 201) {
+      let lang =
+        data.default_language ||
+        (navigator as any).language ||
+        (navigator as any).userLanguage
+      lang = lang.substr(0, 2)
+      await this.services.setting.setLang(lang)
+      switch (lang) {
+        case 'zh':
+          this.$i18n.locale = 'zh_cn'
+          break
+        case 'en':
+          this.$i18n.locale = 'en'
+          break
+        default:
+          this.$i18n.locale = 'zh_cn'
+          break
+      }
       await this.$store.dispatch('user/getUserInfo')
       await this.$router.push('/project')
     } else if (status === 204) {
